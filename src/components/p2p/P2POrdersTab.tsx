@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, TableHeader, TableBody, TableHead, 
@@ -16,8 +15,8 @@ import {
   DropdownMenu, DropdownMenuContent, 
   DropdownMenuItem, DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Eye, MoreHorizontal, Search, Check, X, Clock } from "lucide-react";
+import { CustomPagination } from "./pagination/CustomPagination";
 
 // Mock data for P2P orders
 const mockP2POrders = [
@@ -78,6 +77,7 @@ const P2POrdersTab = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -233,22 +233,11 @@ const P2POrdersTab = () => {
           </div>
 
           {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <CustomPagination 
+            currentPage={currentPage} 
+            totalPages={2}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </CardContent>
 

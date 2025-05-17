@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, TableHeader, TableBody, TableHead, 
@@ -22,8 +21,8 @@ import {
   DropdownMenuItem, DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { useForm } from "react-hook-form";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Edit, Trash2, MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { CustomPagination } from "./pagination/CustomPagination";
 
 // Mock data for payment methods
 const mockPaymentMethods = [
@@ -84,6 +83,7 @@ const P2PPaymentMethodsTab = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [currentMethod, setCurrentMethod] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -271,19 +271,11 @@ const P2PPaymentMethodsTab = () => {
           </div>
 
           {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <CustomPagination 
+            currentPage={currentPage}
+            totalPages={1}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </CardContent>
 

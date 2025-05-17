@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { MerchantApplication } from "./merchant-applications/types";
 import { mockMerchantApplications } from "./merchant-applications/mock-data";
 import { ApplicationFilters } from "./merchant-applications/ApplicationFilters";
 import { ApplicationsTable } from "./merchant-applications/ApplicationsTable";
 import { ApplicationDetailsDialog } from "./merchant-applications/ApplicationDetailsDialog";
+import { CustomPagination } from "./pagination/CustomPagination";
 
 const P2PMerchantApplicationsTab = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,6 +15,7 @@ const P2PMerchantApplicationsTab = () => {
   const [selectedApplication, setSelectedApplication] = useState<MerchantApplication | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleViewApplication = (application: MerchantApplication) => {
     setSelectedApplication(application);
@@ -82,19 +83,11 @@ const P2PMerchantApplicationsTab = () => {
           />
 
           {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <CustomPagination 
+            currentPage={currentPage} 
+            totalPages={1}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </CardContent>
 

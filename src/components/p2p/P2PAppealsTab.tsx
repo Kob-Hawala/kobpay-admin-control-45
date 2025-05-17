@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, TableHeader, TableBody, TableHead, 
@@ -13,8 +12,8 @@ import {
   DialogTitle, DialogFooter, DialogClose 
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Eye, Search, Send, FileText, PaperclipIcon } from "lucide-react";
+import { CustomPagination } from "./pagination/CustomPagination";
 
 // Mock data for appeals
 const mockAppeals = [
@@ -135,6 +134,7 @@ const P2PAppealsTab = () => {
   const [selectedAppeal, setSelectedAppeal] = useState<any>(null);
   const [isAppealOpen, setIsAppealOpen] = useState(false);
   const [adminResponse, setAdminResponse] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -302,19 +302,11 @@ const P2PAppealsTab = () => {
           </div>
 
           {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <CustomPagination 
+            currentPage={currentPage}
+            totalPages={1}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </CardContent>
 
