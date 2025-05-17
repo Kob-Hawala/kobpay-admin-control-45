@@ -19,8 +19,22 @@ import {
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Check, Eye, MoreHorizontal, Search, X, User } from "lucide-react";
 
+// Define the type for merchant applications
+type MerchantApplication = {
+  id: string;
+  userId: string;
+  email: string;
+  applicationDate: string;
+  volumeTraded: string;
+  successfulTrades: number;
+  completionRate: string;
+  status: string;
+  notes?: string;
+  rejectionReason?: string;
+};
+
 // Mock data for merchant applications
-const mockMerchantApplications = [
+const mockMerchantApplications: MerchantApplication[] = [
   {
     id: "app_1",
     userId: "usr_7842",
@@ -81,8 +95,8 @@ const mockMerchantApplications = [
 const P2PMerchantApplicationsTab = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [merchantApplications, setMerchantApplications] = useState(mockMerchantApplications);
-  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [merchantApplications, setMerchantApplications] = useState<MerchantApplication[]>(mockMerchantApplications);
+  const [selectedApplication, setSelectedApplication] = useState<MerchantApplication | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -99,7 +113,7 @@ const P2PMerchantApplicationsTab = () => {
     }
   };
 
-  const handleViewApplication = (application: any) => {
+  const handleViewApplication = (application: MerchantApplication) => {
     setSelectedApplication(application);
     setIsDetailsOpen(true);
     setRejectionReason(application.rejectionReason || "");
@@ -124,7 +138,7 @@ const P2PMerchantApplicationsTab = () => {
     setMerchantApplications(prev => 
       prev.map(app => 
         app.id === id 
-          ? { ...app, status: "rejected", rejectionReason } 
+          ? { ...app, status: "rejected", rejectionReason, notes: app.notes } 
           : app
       )
     );
