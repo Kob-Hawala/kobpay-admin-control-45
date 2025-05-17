@@ -36,7 +36,7 @@ export function Sidebar({ isSidebarOpen }: SidebarProps) {
               K
             </div>
             <span className="text-xl font-bold text-sidebar-foreground">
-              KOB Pay Admin
+              KOB HAWALA
             </span>
           </Link>
         </div>

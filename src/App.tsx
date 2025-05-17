@@ -10,7 +10,6 @@ import { AuthProvider } from "@/providers/auth-provider";
 import ProtectedRoute, { PublicOnlyRoute } from "@/components/protected-route";
 
 // Pages
-import Index from "./pages/Index";
 import LoginPage from "./pages/admin/LoginPage";
 import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
@@ -23,6 +22,11 @@ import FeesPage from "./pages/admin/FeesPage";
 import LiquidityPage from "./pages/admin/LiquidityPage";
 import FiatDepositsPage from "./pages/admin/FiatDepositsPage";
 import StakingPage from "./pages/admin/StakingPage";
+import ExchangeRatesPage from "./pages/admin/ExchangeRatesPage";
+import NewsSettingsPage from "./pages/admin/NewsSettingsPage";
+import ApiSettingsPage from "./pages/admin/ApiSettingsPage";
+import LogsPage from "./pages/admin/LogsPage";
+import SettingsPage from "./pages/admin/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 // Create the query client
@@ -39,8 +43,8 @@ const App = () => {
             <BrowserRouter>
               <AuthProvider>
                 <Routes>
-                  {/* Public routes */}
-                  <Route path="/" element={<Index />} />
+                  {/* Redirect root to login */}
+                  <Route path="/" element={<Navigate to="/admin/login" replace />} />
 
                   {/* Admin Authentication Routes */}
                   <Route 
@@ -138,6 +142,46 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <StakingPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/exchange-rates" 
+                    element={
+                      <ProtectedRoute>
+                        <ExchangeRatesPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/news-settings" 
+                    element={
+                      <ProtectedRoute>
+                        <NewsSettingsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/api-settings" 
+                    element={
+                      <ProtectedRoute>
+                        <ApiSettingsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/logs" 
+                    element={
+                      <ProtectedRoute>
+                        <LogsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/settings" 
+                    element={
+                      <ProtectedRoute>
+                        <SettingsPage />
                       </ProtectedRoute>
                     } 
                   />
