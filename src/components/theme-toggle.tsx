@@ -1,7 +1,7 @@
 
 import { useTheme } from "@/providers/theme-provider";
 import { Button } from "@/components/ui/button";
-import { moon, sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -14,9 +14,9 @@ export function ThemeToggle() {
       className="rounded-full"
     >
       {theme === "light" ? (
-        <moon className="h-5 w-5" />
+        <Moon className="h-5 w-5" />
       ) : (
-        <sun className="h-5 w-5" />
+        <Sun className="h-5 w-5" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

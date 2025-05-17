@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { logIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -126,7 +126,7 @@ export default function LoginPage() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <logIn className="h-4 w-4" />
+                      <LogIn className="h-4 w-4" />
                       <span>Sign in</span>
                     </div>
                   )}

@@ -8,7 +8,16 @@ import {
   NewsCard,
   AlertCard
 } from "@/components/dashboard";
-import { user, database, eye } from "lucide-react";
+import { 
+  User,
+  Database, 
+  Eye,
+  Lock,
+  ArrowUp,
+  Bell,
+  Key,
+  Filter
+} from "lucide-react";
 
 export default function DashboardPage() {
   // Mock data for dashboard
@@ -82,7 +91,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <user className="h-4 w-4 text-muted-foreground" />
+              <User className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statsData.totalUsers}</div>
@@ -110,7 +119,7 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-medium">
                 Escrow Volume
               </CardTitle>
-              <lock className="h-4 w-4 text-muted-foreground" />
+              <Lock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statsData.escrowVolume}</div>
@@ -136,7 +145,7 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-medium">
                 Vault Balances
               </CardTitle>
-              <database className="h-4 w-4 text-muted-foreground" />
+              <Database className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
@@ -167,7 +176,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Fee Revenue</CardTitle>
-              <filter className="h-4 w-4 text-muted-foreground" />
+              <Filter className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{statsData.revenue}</div>
@@ -176,7 +185,7 @@ export default function DashboardPage() {
               </p>
               <div className="flex items-center text-sm mt-4">
                 <div className="flex items-center gap-1 text-emerald-500">
-                  <arrowUp className="h-3 w-3" />
+                  <ArrowUp className="h-3 w-3" />
                   <span>12.5%</span>
                 </div>
                 <span className="text-muted-foreground ml-1">vs last month</span>
@@ -218,7 +227,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg">Latest Crypto News</CardTitle>
-              <eye className="h-4 w-4 text-muted-foreground" />
+              <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="space-y-4">
               {newsItems.map((item, index) => (
@@ -231,7 +240,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg">System Alerts</CardTitle>
-              <bell className="h-4 w-4 text-muted-foreground" />
+              <Bell className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="space-y-4">
               {alerts.map((alert, index) => (
@@ -251,14 +260,14 @@ export default function DashboardPage() {
               <div className="space-y-2">
                 <div className="text-sm font-medium">Hubtel API</div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <key className="h-4 w-4" />
+                  <Key className="h-4 w-4" />
                   <div className="font-mono text-sm">••••••••••••••••3f8a</div>
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="text-sm font-medium">News API Source</div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <eye className="h-4 w-4" />
+                  <Eye className="h-4 w-4" />
                   <div className="text-sm">api.cryptonews.com/v1/feed</div>
                 </div>
               </div>

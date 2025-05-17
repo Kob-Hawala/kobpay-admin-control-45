@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lock } from "lucide-react"; 
+import { ArrowRight, Lock, User, Database, Settings } from "lucide-react"; 
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -31,7 +31,7 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <div className="bg-card rounded-xl p-6 shadow-sm">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
-              <user className="h-5 w-5" />
+              <User className="h-5 w-5" />
             </div>
             <h3 className="font-bold text-lg mb-2">User Management</h3>
             <p className="text-muted-foreground">
@@ -41,7 +41,7 @@ const Index = () => {
           
           <div className="bg-card rounded-xl p-6 shadow-sm">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
-              <database className="h-5 w-5" />
+              <Database className="h-5 w-5" />
             </div>
             <h3 className="font-bold text-lg mb-2">Vault Control</h3>
             <p className="text-muted-foreground">
@@ -51,7 +51,7 @@ const Index = () => {
           
           <div className="bg-card rounded-xl p-6 shadow-sm">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
-              <settings className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
             </div>
             <h3 className="font-bold text-lg mb-2">Platform Settings</h3>
             <p className="text-muted-foreground">

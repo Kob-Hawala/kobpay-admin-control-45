@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/providers/auth-provider";
@@ -6,24 +5,24 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  calendar,
-  database,
-  settings,
-  user,
-  shield,
-  file,
-  logOut,
-  bell,
-  menu,
-  x,
-  filter,
-  users,
-  search,
-  key,
-  lock,
-  clock,
-  trash2,
-  eye
+  Calendar,
+  Database,
+  Settings,
+  User,
+  Shield,
+  File,
+  LogOut,
+  Bell,
+  Menu,
+  X,
+  Filter,
+  Users,
+  Search,
+  Key,
+  Lock,
+  Clock,
+  Trash2,
+  Eye
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -53,77 +52,77 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     {
       label: "Dashboard",
       path: "/admin/dashboard",
-      icon: <database className="h-5 w-5" />,
+      icon: <Database className="h-5 w-5" />,
     },
     {
       label: "Users",
       path: "/admin/users",
-      icon: <user className="h-5 w-5" />,
+      icon: <User className="h-5 w-5" />,
     },
     {
       label: "KYC Approval",
       path: "/admin/kyc",
-      icon: <shield className="h-5 w-5" />,
+      icon: <Shield className="h-5 w-5" />,
     },
     {
       label: "KOB Pay ID",
       path: "/admin/kobpay",
-      icon: <key className="h-5 w-5" />,
+      icon: <Key className="h-5 w-5" />,
     },
     {
       label: "Escrow Control",
       path: "/admin/escrow",
-      icon: <lock className="h-5 w-5" />,
+      icon: <Lock className="h-5 w-5" />,
     },
     {
       label: "Transactions",
       path: "/admin/transactions",
-      icon: <file className="h-5 w-5" />,
+      icon: <File className="h-5 w-5" />,
     },
     {
       label: "Fee Control",
       path: "/admin/fees",
-      icon: <filter className="h-5 w-5" />,
+      icon: <Filter className="h-5 w-5" />,
     },
     {
       label: "Fiat Deposits",
       path: "/admin/fiat-deposits",
-      icon: <file className="h-5 w-5" />,
+      icon: <File className="h-5 w-5" />,
     },
     {
       label: "Vault Transfers",
       path: "/admin/liquidity",
-      icon: <database className="h-5 w-5" />,
+      icon: <Database className="h-5 w-5" />,
     },
     {
       label: "Staking",
       path: "/admin/staking",
-      icon: <calendar className="h-5 w-5" />,
+      icon: <Calendar className="h-5 w-5" />,
     },
     {
       label: "Exchange Rates",
       path: "/admin/exchange-rates",
-      icon: <filter className="h-5 w-5" />,
+      icon: <Filter className="h-5 w-5" />,
     },
     {
       label: "News Feed",
       path: "/admin/news-settings",
-      icon: <eye className="h-5 w-5" />,
+      icon: <Eye className="h-5 w-5" />,
     },
     {
       label: "API Settings",
       path: "/admin/api-settings",
-      icon: <key className="h-5 w-5" />,
+      icon: <Key className="h-5 w-5" />,
     },
     {
       label: "Activity Logs",
       path: "/admin/logs",
-      icon: <clock className="h-5 w-5" />,
+      icon: <Clock className="h-5 w-5" />,
     },
     {
       label: "Settings",
       path: "/admin/settings",
-      icon: <settings className="h-5 w-5" />,
+      icon: <Settings className="h-5 w-5" />,
     },
   ];
 
@@ -142,9 +141,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           className="rounded-full bg-background/80 backdrop-blur-sm"
         >
           {isSidebarOpen ? (
-            <x className="h-5 w-5" />
+            <X className="h-5 w-5" />
           ) : (
-            <menu className="h-5 w-5" />
+            <Menu className="h-5 w-5" />
           )}
         </Button>
       </div>
@@ -209,7 +208,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
-                    <settings className="h-4 w-4" />
+                    <Settings className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -219,7 +218,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <DropdownMenuItem>Security</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-destructive">
-                    <logOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -245,7 +244,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="rounded-full">
-                <bell className="h-5 w-5" />
+                <Bell className="h-5 w-5" />
               </Button>
 
               {/* User menu (mobile only) */}
@@ -266,7 +265,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                     <DropdownMenuItem>Security</DropdownMenuItem>
                     <DropdownMenuItem onClick={logout} className="text-destructive">
-                      <logOut className="mr-2 h-4 w-4" />
+                      <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>

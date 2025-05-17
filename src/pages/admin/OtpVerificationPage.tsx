@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { checkIcon, arrowLeft } from "lucide-react";
+import { CheckIcon, ArrowLeft } from "lucide-react";
 
 const otpSchema = z.object({
   otp: z.string().min(6, "OTP must be at least 6 digits"),
@@ -113,7 +113,7 @@ export default function OtpVerificationPage() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <checkIcon className="h-4 w-4" />
+                        <CheckIcon className="h-4 w-4" />
                         <span>Verify OTP</span>
                       </div>
                     )}
@@ -126,7 +126,7 @@ export default function OtpVerificationPage() {
                     disabled={isLoading}
                   >
                     <div className="flex items-center gap-2">
-                      <arrowLeft className="h-4 w-4" />
+                      <ArrowLeft className="h-4 w-4" />
                       <span>Back to Login</span>
                     </div>
                   </Button>
