@@ -1,171 +1,163 @@
 
-// Mock data for activity logs
-
-export type LogEntry = {
+export interface ActivityLog {
   id: string;
-  userId: string;
-  userName: string;
-  action: string;
   timestamp: string;
+  action: string;
+  user: string;
+  description: string;
+  status: string;
   ipAddress: string;
-  details?: string;
-  status: 'success' | 'warning' | 'error' | 'info';
-  resource?: string;
-};
+  details?: Record<string, any>;
+}
 
-export const mockLogs: LogEntry[] = [
+export const mockActivityLogs: ActivityLog[] = [
   {
-    id: "log_001",
-    userId: "usr_1",
-    userName: "John Doe",
-    action: "User Login",
-    timestamp: "2023-06-12T14:25:00Z",
+    id: "log_1",
+    timestamp: "2025-05-17T08:30:22Z",
+    action: "Login",
+    user: "admin@system.com",
+    description: "Administrative login successful",
+    status: "Success",
     ipAddress: "192.168.1.1",
-    status: "success",
+    details: { browser: "Chrome", os: "Windows 11" }
   },
   {
-    id: "log_002",
-    userId: "usr_1",
-    userName: "John Doe",
-    action: "Changed 2FA Settings",
-    timestamp: "2023-06-12T14:26:00Z",
+    id: "log_2",
+    timestamp: "2025-05-17T07:15:10Z",
+    action: "Update",
+    user: "admin@system.com",
+    description: "Fee structure updated",
+    status: "Success",
     ipAddress: "192.168.1.1",
-    details: "Enabled 2FA via authenticator app",
-    status: "success",
+    details: { oldFee: "1%", newFee: "0.8%" }
   },
   {
-    id: "log_003",
-    userId: "usr_1",
-    userName: "John Doe",
-    action: "BTC Withdrawal",
-    timestamp: "2023-06-12T14:30:00Z",
+    id: "log_3",
+    timestamp: "2025-05-16T22:45:30Z",
+    action: "Create",
+    user: "manager@system.com",
+    description: "New user account created",
+    status: "Success",
+    ipAddress: "192.168.1.2",
+    details: { userId: "user_789", userType: "Customer" }
+  },
+  {
+    id: "log_4",
+    timestamp: "2025-05-16T19:12:05Z",
+    action: "Delete",
+    user: "admin@system.com",
+    description: "Transaction record deleted",
+    status: "Warning",
     ipAddress: "192.168.1.1",
-    details: "Withdrew 0.25 BTC to external wallet bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-    status: "success",
-    resource: "Wallet"
+    details: { transactionId: "trx_456", reason: "Duplicate record" }
   },
   {
-    id: "log_004",
-    userId: "usr_2",
-    userName: "Jane Smith",
-    action: "User Login",
-    timestamp: "2023-06-11T10:15:00Z",
-    ipAddress: "192.168.2.5",
-    status: "success",
+    id: "log_5",
+    timestamp: "2025-05-16T16:30:45Z",
+    action: "Update",
+    user: "support@system.com",
+    description: "Customer KYC data updated",
+    status: "Success",
+    ipAddress: "192.168.1.3",
+    details: { userId: "user_123", fields: ["address", "phone"] }
   },
   {
-    id: "log_005",
-    userId: "usr_2",
-    userName: "Jane Smith",
-    action: "P2P Purchase",
-    timestamp: "2023-06-11T10:20:00Z",
-    ipAddress: "192.168.2.5",
-    details: "Purchased 0.15 BTC via P2P",
-    status: "success",
-    resource: "P2P Market"
+    id: "log_6",
+    timestamp: "2025-05-16T14:22:18Z",
+    action: "Login",
+    user: "manager@system.com",
+    description: "Failed login attempt",
+    status: "Error",
+    ipAddress: "192.168.1.2",
+    details: { reason: "Invalid password", attempts: 3 }
   },
   {
-    id: "log_006",
-    userId: "usr_3",
-    userName: "Michael Johnson",
-    action: "Account Created",
-    timestamp: "2023-06-05T15:20:00Z",
-    ipAddress: "192.168.3.10",
-    status: "info",
+    id: "log_7",
+    timestamp: "2025-05-16T11:05:52Z",
+    action: "Create",
+    user: "admin@system.com",
+    description: "New system announcement created",
+    status: "Success",
+    ipAddress: "192.168.1.1",
+    details: { announcementId: "ann_123", audience: "All Users" }
   },
   {
-    id: "log_007",
-    userId: "usr_3",
-    userName: "Michael Johnson",
-    action: "KYC Documents Uploaded",
-    timestamp: "2023-06-05T15:25:00Z",
-    ipAddress: "192.168.3.10",
-    details: "Uploaded passport, selfie, and proof of address",
-    status: "info",
-    resource: "KYC"
+    id: "log_8",
+    timestamp: "2025-05-15T23:57:33Z",
+    action: "Update",
+    user: "system",
+    description: "Automated database backup completed",
+    status: "Success",
+    ipAddress: "127.0.0.1",
+    details: { backupSize: "1.2GB", duration: "45s" }
   },
   {
-    id: "log_008",
-    userId: "admin_1",
-    userName: "Admin User",
-    action: "KYC Verification",
-    timestamp: "2023-06-06T09:30:00Z",
-    ipAddress: "192.168.4.20",
-    details: "Approved KYC for user Michael Johnson",
-    status: "success",
-    resource: "KYC"
+    id: "log_9",
+    timestamp: "2025-05-15T20:18:24Z",
+    action: "Delete",
+    user: "manager@system.com",
+    description: "Outdated news articles removed",
+    status: "Success",
+    ipAddress: "192.168.1.2",
+    details: { count: 5, olderThan: "90 days" }
   },
   {
-    id: "log_009",
-    userId: "usr_4",
-    userName: "Sarah Williams",
-    action: "Failed Login Attempt",
-    timestamp: "2023-06-01T08:30:00Z",
-    ipAddress: "203.0.113.5",
-    details: "Multiple failed login attempts detected",
-    status: "warning",
+    id: "log_10",
+    timestamp: "2025-05-15T16:42:10Z",
+    action: "Login",
+    user: "support@system.com",
+    description: "Login from new device",
+    status: "Warning",
+    ipAddress: "192.168.1.4",
+    details: { device: "iPad", location: "New York" }
   },
   {
-    id: "log_010",
-    userId: "admin_2",
-    userName: "System Admin",
-    action: "Account Suspension",
-    timestamp: "2023-06-01T09:15:00Z",
-    ipAddress: "192.168.4.15",
-    details: "Suspended account of Sarah Williams due to suspicious activity",
-    status: "warning",
+    id: "log_11",
+    timestamp: "2025-05-15T14:33:29Z",
+    action: "Update",
+    user: "admin@system.com",
+    description: "System settings modified",
+    status: "Success",
+    ipAddress: "192.168.1.1",
+    details: { setting: "email.notifications.frequency", oldValue: "daily", newValue: "immediate" }
   },
   {
-    id: "log_011",
-    userId: "system",
-    userName: "System",
-    action: "Daily Backup",
-    timestamp: "2023-06-12T00:00:00Z",
-    ipAddress: "internal",
-    status: "success",
-    resource: "Database"
+    id: "log_12",
+    timestamp: "2025-05-15T10:11:44Z",
+    action: "Create",
+    user: "manager@system.com",
+    description: "New promotional campaign created",
+    status: "Success",
+    ipAddress: "192.168.1.2",
+    details: { campaignId: "camp_456", startDate: "2025-06-01" }
   },
   {
-    id: "log_012",
-    userId: "system",
-    userName: "System",
-    action: "Exchange Rate Update",
-    timestamp: "2023-06-12T00:15:00Z",
-    ipAddress: "internal",
-    status: "success",
-    resource: "Exchange Rates"
+    id: "log_13",
+    timestamp: "2025-05-14T22:08:17Z",
+    action: "Login",
+    user: "admin@system.com",
+    description: "Administrative login successful",
+    status: "Success",
+    ipAddress: "192.168.1.1"
   },
   {
-    id: "log_013",
-    userId: "admin_1",
-    userName: "Admin User",
-    action: "Fee Structure Update",
-    timestamp: "2023-06-10T11:20:00Z",
-    ipAddress: "192.168.4.20",
-    details: "Updated withdrawal fees for BTC from 0.0005 to 0.0004",
-    status: "info",
-    resource: "Fee Structure"
+    id: "log_14",
+    timestamp: "2025-05-14T19:23:05Z",
+    action: "Update",
+    user: "support@system.com",
+    description: "User password reset",
+    status: "Success",
+    ipAddress: "192.168.1.3",
+    details: { userId: "user_234", method: "admin reset" }
   },
   {
-    id: "log_014",
-    userId: "usr_5",
-    userName: "Robert Brown",
-    action: "Large Deposit",
-    timestamp: "2023-05-28T16:20:00Z",
-    ipAddress: "192.168.5.20",
-    details: "Deposited 1.5 BTC",
-    status: "info",
-    resource: "Wallet"
-  },
-  {
-    id: "log_015",
-    userId: "system",
-    userName: "System",
-    action: "API Error",
-    timestamp: "2023-06-11T03:45:00Z",
-    ipAddress: "internal",
-    details: "Failed to connect to external exchange API. Timeout after 30s",
-    status: "error",
-    resource: "External API"
+    id: "log_15",
+    timestamp: "2025-05-14T15:47:31Z",
+    action: "Delete",
+    user: "admin@system.com",
+    description: "Blocked user IP addresses cleared",
+    status: "Warning",
+    ipAddress: "192.168.1.1",
+    details: { count: 12, reason: "Monthly security policy" }
   }
 ];
