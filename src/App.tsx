@@ -15,6 +15,7 @@ import LoginPage from "./pages/admin/LoginPage";
 import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import UsersPage from "./pages/admin/UsersPage";
+import KycPage from "./pages/admin/KycPage";
 import NotFound from "./pages/NotFound";
 
 // Create the query client
@@ -66,6 +67,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <UsersPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/kyc" 
+                    element={
+                      <ProtectedRoute>
+                        <KycPage />
                       </ProtectedRoute>
                     } 
                   />
