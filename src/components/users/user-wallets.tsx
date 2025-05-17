@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { copy, wallet } from "lucide-react";
+import { Copy, Wallet } from "lucide-react";
 
 interface UserWalletsProps {
   user: any;
@@ -97,7 +97,7 @@ export default function UserWallets({ user }: UserWalletsProps) {
                           onClick={() => handleCopyAddress(walletItem.address)}
                           className="text-primary hover:text-primary/80"
                         >
-                          <copy className="h-4 w-4" />
+                          <Copy className="h-4 w-4" />
                           <span className="sr-only">Copy address</span>
                         </button>
                       </div>
@@ -116,7 +116,7 @@ export default function UserWallets({ user }: UserWalletsProps) {
                         className="flex gap-1"
                         onClick={() => handleFundWallet(walletItem)}
                       >
-                        <wallet className="h-4 w-4" />
+                        <Wallet className="h-4 w-4" />
                         Fund
                       </Button>
                     </TableCell>
@@ -154,7 +154,7 @@ export default function UserWallets({ user }: UserWalletsProps) {
                   size="icon"
                   onClick={() => selectedWallet && handleCopyAddress(selectedWallet.address)}
                 >
-                  <copy className="h-4 w-4" />
+                  <Copy className="h-4 w-4" />
                 </Button>
               </div>
             </div>

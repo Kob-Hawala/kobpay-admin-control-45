@@ -42,7 +42,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Eye, check, x } from "lucide-react";
+import { Eye, Check, X } from "lucide-react";
 
 interface UserFiatDepositsProps {
   user: any;
@@ -277,7 +277,7 @@ export default function UserFiatDeposits({ user }: UserFiatDepositsProps) {
                               className="flex items-center"
                               onClick={() => handleAction(deposit, "approve")}
                             >
-                              <check className="h-4 w-4 mr-1" /> Approve
+                              <Check className="h-4 w-4 mr-1" /> Approve
                             </Button>
                             <Button 
                               variant="outline" 
@@ -285,7 +285,7 @@ export default function UserFiatDeposits({ user }: UserFiatDepositsProps) {
                               className="flex items-center"
                               onClick={() => handleAction(deposit, "reject")}
                             >
-                              <x className="h-4 w-4 mr-1" /> Reject
+                              <X className="h-4 w-4 mr-1" /> Reject
                             </Button>
                           </div>
                         )}

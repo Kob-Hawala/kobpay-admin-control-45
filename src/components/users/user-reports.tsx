@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  download,
-  file_text,
+  Download,
+  FileText,
 } from "lucide-react";
 import { 
   BarChart,
@@ -80,36 +80,36 @@ export default function UserReports({ user }: UserReportsProps) {
               className="flex items-center justify-center gap-2"
               onClick={() => handleExportCSV("transactions")}
             >
-              <file_text className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               <span>All Transactions</span>
-              <download className="h-4 w-4 ml-auto" />
+              <Download className="h-4 w-4 ml-auto" />
             </Button>
             <Button
               variant="outline"
               className="flex items-center justify-center gap-2"
               onClick={() => handleExportCSV("deposits")}
             >
-              <file_text className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               <span>Deposit Logs</span>
-              <download className="h-4 w-4 ml-auto" />
+              <Download className="h-4 w-4 ml-auto" />
             </Button>
             <Button
               variant="outline"
               className="flex items-center justify-center gap-2"
               onClick={() => handleExportCSV("withdrawals")}
             >
-              <file_text className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               <span>Withdrawal Logs</span>
-              <download className="h-4 w-4 ml-auto" />
+              <Download className="h-4 w-4 ml-auto" />
             </Button>
             <Button
               variant="outline"
               className="flex items-center justify-center gap-2"
               onClick={() => handleExportCSV("staking")}
             >
-              <file_text className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               <span>Staking Summary</span>
-              <download className="h-4 w-4 ml-auto" />
+              <Download className="h-4 w-4 ml-auto" />
             </Button>
           </div>
         </CardContent>

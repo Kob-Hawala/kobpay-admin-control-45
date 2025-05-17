@@ -42,7 +42,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Eye, check } from "lucide-react";
+import { Eye, Check } from "lucide-react";
 
 interface UserFiatWithdrawalsProps {
   user: any;
@@ -267,7 +267,7 @@ export default function UserFiatWithdrawals({ user }: UserFiatWithdrawalsProps) 
                             className="flex items-center"
                             onClick={() => handleMarkAsPaid(withdrawal)}
                           >
-                            <check className="h-4 w-4 mr-1" /> Mark as Paid
+                            <Check className="h-4 w-4 mr-1" /> Mark as Paid
                           </Button>
                         )}
                       </TableCell>

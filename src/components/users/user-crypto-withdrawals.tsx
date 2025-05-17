@@ -42,7 +42,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { copy, check, x } from "lucide-react";
+import { Copy, Check, X } from "lucide-react";
 
 interface UserCryptoWithdrawalsProps {
   user: any;
@@ -245,7 +245,7 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
                             onClick={() => handleCopy(withdrawal.id)}
                             className="text-primary hover:text-primary/80"
                           >
-                            <copy className="h-4 w-4" />
+                            <Copy className="h-4 w-4" />
                             <span className="sr-only">Copy ID</span>
                           </button>
                         </div>
@@ -260,7 +260,7 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
                               onClick={() => handleCopy(withdrawal.txnHash)}
                               className="text-primary hover:text-primary/80"
                             >
-                              <copy className="h-4 w-4" />
+                              <Copy className="h-4 w-4" />
                               <span className="sr-only">Copy hash</span>
                             </button>
                           </div>
@@ -283,7 +283,7 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
                             onClick={() => handleCopy(withdrawal.address)}
                             className="text-primary hover:text-primary/80"
                           >
-                            <copy className="h-4 w-4" />
+                            <Copy className="h-4 w-4" />
                             <span className="sr-only">Copy address</span>
                           </button>
                         </div>
