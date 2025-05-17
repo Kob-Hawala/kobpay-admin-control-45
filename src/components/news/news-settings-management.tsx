@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -167,7 +166,6 @@ export default function NewsSettingsManagement() {
                         <Switch 
                           checked={source.enabled} 
                           onCheckedChange={() => handleSourceToggle(source.id)} 
-                          size="sm" 
                         />
                         <span>{source.enabled ? "Enabled" : "Disabled"}</span>
                       </div>
@@ -221,7 +219,6 @@ export default function NewsSettingsManagement() {
                         <Switch 
                           checked={article.published} 
                           onCheckedChange={() => handleArticleToggle(article.id)} 
-                          size="sm" 
                         />
                         <span>{article.published ? "Published" : "Hidden"}</span>
                       </div>
