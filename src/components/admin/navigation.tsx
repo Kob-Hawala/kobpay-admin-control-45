@@ -13,7 +13,8 @@ import {
   Clock,
   Eye,
   Store,
-  Bell
+  Bell,
+  MessageSquare
 } from "lucide-react";
 import React from "react";
 
@@ -60,6 +61,11 @@ export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
       label: "Notifications",
       path: "/admin/notifications",
       icon: <Bell className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
+    },
+    {
+      label: "Messaging",
+      path: "/admin/messaging",
+      icon: <MessageSquare className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Escrow Control",
@@ -129,13 +135,15 @@ export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
             title={collapsed ? item.label : undefined}
             className={`${
               isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground dark:bg-primary/10"
+                : "text-sidebar-foreground hover:bg-sidebar-accent/50 dark:text-gray-200 dark:hover:bg-primary/5"
             } flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
               collapsed ? "justify-center" : ""
             }`}
           >
-            {item.icon}
+            {React.cloneElement(item.icon, {
+              className: `h-5 w-5 ${isActive ? "text-sidebar-accent-foreground dark:text-primary" : "text-sidebar-foreground dark:text-gray-200"}`
+            })}
             {!collapsed && <span>{item.label}</span>}
           </Link>
         );

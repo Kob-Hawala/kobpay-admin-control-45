@@ -10,6 +10,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import ProtectedRoute, { PublicOnlyRoute } from "@/components/protected-route";
 
 // Pages
+import IndexPage from "./pages/Index";
 import LoginPage from "./pages/admin/LoginPage";
 import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
@@ -27,6 +28,8 @@ import ExchangeRatesPage from "./pages/admin/ExchangeRatesPage";
 import NewsSettingsPage from "./pages/admin/NewsSettingsPage";
 import ApiSettingsPage from "./pages/admin/ApiSettingsPage";
 import LogsPage from "./pages/admin/LogsPage";
+import NotificationsPage from "./pages/admin/NotificationsPage";
+import MessagingPage from "./pages/admin/MessagingPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import P2PPage from "./pages/admin/P2PPage";
 import NotFound from "./pages/NotFound";
@@ -47,7 +50,7 @@ const App = () => {
               <AuthProvider>
                 <Routes>
                   {/* Redirect root to login */}
-                  <Route path="/" element={<Navigate to="/admin/login" replace />} />
+                  <Route path="/" element={<IndexPage />} />
 
                   {/* Admin Authentication Routes */}
                   <Route 
@@ -121,6 +124,22 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <P2PPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/notifications" 
+                    element={
+                      <ProtectedRoute>
+                        <NotificationsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/messaging" 
+                    element={
+                      <ProtectedRoute>
+                        <MessagingPage />
                       </ProtectedRoute>
                     } 
                   />
