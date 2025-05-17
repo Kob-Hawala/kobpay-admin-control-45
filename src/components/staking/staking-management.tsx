@@ -197,7 +197,7 @@ export default function StakingManagement() {
     if (selectedStake) {
       const updatedStakes = stakes.map(stake => 
         stake.id === selectedStake.id 
-          ? { ...stake, status: "cancelled", remainingDays: 0 } 
+          ? { ...stake, status: "cancelled" as const, remainingDays: 0 } 
           : stake
       );
       
@@ -212,7 +212,7 @@ export default function StakingManagement() {
   const handleEndAllStakes = () => {
     const updatedStakes = stakes.map(stake => 
       stake.status === "active" 
-        ? { ...stake, status: "cancelled", remainingDays: 0 } 
+        ? { ...stake, status: "cancelled" as const, remainingDays: 0 } 
         : stake
     );
     
