@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MobileSidebarToggleProps {
   isSidebarOpen: boolean;
@@ -8,8 +9,13 @@ interface MobileSidebarToggleProps {
 }
 
 export function MobileSidebarToggle({ isSidebarOpen, toggleSidebar }: MobileSidebarToggleProps) {
+  const isMobile = useIsMobile();
+  
+  // Only show on mobile
+  if (!isMobile) return null;
+  
   return (
-    <div className="fixed top-4 left-4 md:hidden z-50">
+    <div className="fixed top-4 left-4 z-50">
       <Button
         variant="outline"
         size="icon"

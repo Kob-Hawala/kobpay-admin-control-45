@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "./user-menu";
 import { useAuth } from "@/providers/auth-provider";
+import { Menu } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -11,12 +13,22 @@ interface HeaderProps {
 
 export function Header({ toggleSidebar }: HeaderProps) {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
 
   return (
     <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-30">
       <div className="px-4 h-full flex items-center justify-between">
-        <div>
-          {/* Mobile sidebar already has toggle button outside */}
+        <div className="flex items-center">
+          {/* Desktop hamburger menu */}
+          <Button 
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="mr-2 hidden md:flex"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
         </div>
 
         {/* Right side of header */}
@@ -29,8 +41,8 @@ export function Header({ toggleSidebar }: HeaderProps) {
             <Bell className="h-5 w-5" />
           </Button>
 
-          {/* User menu (mobile only) */}
-          <div className="md:hidden">
+          {/* User menu (desktop only) */}
+          <div className="hidden md:block">
             <UserMenu user={user} />
           </div>
         </div>

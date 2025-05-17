@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Settings } from "lucide-react";
 import { AdminNavigation } from "./navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -21,32 +22,49 @@ interface SidebarProps {
 
 export function Sidebar({ isSidebarOpen }: SidebarProps) {
   const { user, logout } = useAuth();
+  const isMobile = useIsMobile();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    if (isMobile) {
+      // Prevent default prevents the immediate navigation to allow the sidebar to close first
+      e.preventDefault();
+      // Use setTimeout to delay navigation until after state updates
+      setTimeout(() => navigate(path), 100);
+    }
+  };
   
   return (
     <div
-      className={`fixed md:relative z-40 h-full transition-all duration-300 ease-in-out transform ${
-        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 w-64 bg-sidebar border-r border-border`}
+      className={`fixed md:relative z-40 h-full transition-all duration-300 ease-in-out transform 
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+        ${isMobile ? "w-[80%] max-w-[280px]" : "w-64"} 
+        md:translate-x-0 
+        ${isSidebarOpen && !isMobile ? "md:w-64" : "md:w-16"} 
+        bg-sidebar border-r border-border`}
     >
       <div className="h-full flex flex-col">
         {/* Logo */}
-        <div className="px-4 py-6 flex items-center justify-center">
+        <div className={`px-4 py-6 flex items-center ${!isSidebarOpen && !isMobile ? "justify-center" : ""}`}>
           <Link to="/admin/dashboard" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
               K
             </div>
-            <span className="text-xl font-bold text-sidebar-foreground">
-              KOB HAWALA
-            </span>
+            {(isSidebarOpen || isMobile) && (
+              <span className="text-xl font-bold text-sidebar-foreground">
+                KOB HAWALA
+              </span>
+            )}
           </Link>
         </div>
 
         {/* Navigation */}
         <div className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide py-4">
-          <AdminNavigation />
+          <AdminNavigation collapsed={!isSidebarOpen && !isMobile} />
         </div>
 
-        {/* User section */}
+        {/* User section - show full on mobile regardless of state */}
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9">
@@ -55,14 +73,16 @@ export function Sidebar({ isSidebarOpen }: SidebarProps) {
                 {user?.name?.charAt(0) || "A"}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {user?.name || "Admin User"}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user?.email || "admin@example.com"}
-              </p>
-            </div>
+            {(isSidebarOpen || isMobile) && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  {user?.name || "Admin User"}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email || "admin@example.com"}
+                </p>
+              </div>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">

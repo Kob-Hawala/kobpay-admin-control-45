@@ -22,7 +22,11 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-export function AdminNavigation() {
+interface AdminNavigationProps {
+  collapsed?: boolean;
+}
+
+export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
   const location = useLocation();
   
   const navItems: NavItem[] = [
@@ -116,14 +120,17 @@ export function AdminNavigation() {
           <Link
             key={item.path}
             to={item.path}
+            title={collapsed ? item.label : undefined}
             className={`${
               isActive
                 ? "bg-sidebar-accent text-sidebar-accent-foreground"
                 : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-            } flex items-center gap-3 px-4 py-3 rounded-md transition-colors`}
+            } flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
+              collapsed ? "justify-center" : ""
+            }`}
           >
             {item.icon}
-            <span>{item.label}</span>
+            {!collapsed && <span>{item.label}</span>}
           </Link>
         );
       })}
