@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Card, 
@@ -42,7 +41,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Check, X } from "lucide-react";
+import { Copy, Check, X, Eye } from "lucide-react";
 
 interface UserCryptoWithdrawalsProps {
   user: any;
@@ -140,6 +139,16 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+    // In a real app, we would show a toast notification
+  };
+
+  const handleCopyHash = (hash: string) => {
+    navigator.clipboard.writeText(hash);
+    // In a real app, we would show a toast notification
+  };
+
+  const handleCopyAddress = (address: string) => {
+    navigator.clipboard.writeText(address);
     // In a real app, we would show a toast notification
   };
 
@@ -250,23 +259,23 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
                           </button>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {withdrawal.txnHash ? (
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs truncate max-w-[80px]">
+                      <TableCell className="font-mono text-xs">
+                        <div className="flex items-center gap-2">
+                          {withdrawal.txnHash ? (
+                            <>
                               {withdrawal.txnHash.substring(0, 8)}...{withdrawal.txnHash.slice(-4)}
-                            </span>
-                            <button
-                              onClick={() => handleCopy(withdrawal.txnHash)}
-                              className="text-primary hover:text-primary/80"
-                            >
-                              <Copy className="h-4 w-4" />
-                              <span className="sr-only">Copy hash</span>
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground italic text-xs">Not available</span>
-                        )}
+                              <button
+                                onClick={() => handleCopyHash(withdrawal.txnHash)}
+                                className="text-primary hover:text-primary/80"
+                              >
+                                <Copy className="h-4 w-4" />
+                                <span className="sr-only">Copy hash</span>
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground italic">Pending</span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         {withdrawal.amount} {withdrawal.currency}
@@ -276,11 +285,9 @@ export default function UserCryptoWithdrawals({ user }: UserCryptoWithdrawalsPro
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs truncate max-w-[80px]">
-                            {withdrawal.address.substring(0, 8)}...{withdrawal.address.slice(-4)}
-                          </span>
+                          {withdrawal.address.substring(0, 8)}...{withdrawal.address.slice(-4)}
                           <button
-                            onClick={() => handleCopy(withdrawal.address)}
+                            onClick={() => handleCopyAddress(withdrawal.address)}
                             className="text-primary hover:text-primary/80"
                           >
                             <Copy className="h-4 w-4" />
