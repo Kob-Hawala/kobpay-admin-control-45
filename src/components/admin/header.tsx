@@ -1,0 +1,40 @@
+
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { UserMenu } from "./user-menu";
+import { useAuth } from "@/providers/auth-provider";
+
+interface HeaderProps {
+  toggleSidebar: () => void;
+}
+
+export function Header({ toggleSidebar }: HeaderProps) {
+  const { user } = useAuth();
+
+  return (
+    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-30">
+      <div className="px-4 h-full flex items-center justify-between">
+        <div>
+          {/* Mobile sidebar already has toggle button outside */}
+        </div>
+
+        {/* Right side of header */}
+        <div className="flex items-center gap-2">
+          {/* Theme toggle */}
+          <ThemeToggle />
+
+          {/* Notifications */}
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Bell className="h-5 w-5" />
+          </Button>
+
+          {/* User menu (mobile only) */}
+          <div className="md:hidden">
+            <UserMenu user={user} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
