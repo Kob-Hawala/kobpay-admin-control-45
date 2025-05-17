@@ -20,6 +20,9 @@ import KobPayPage from "./pages/admin/KobPayPage";
 import EscrowPage from "./pages/admin/EscrowPage";
 import TransactionsPage from "./pages/admin/TransactionsPage";
 import FeesPage from "./pages/admin/FeesPage";
+import LiquidityPage from "./pages/admin/LiquidityPage";
+import FiatDepositsPage from "./pages/admin/FiatDepositsPage";
+import StakingPage from "./pages/admin/StakingPage";
 import NotFound from "./pages/NotFound";
 
 // Create the query client
@@ -111,6 +114,30 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <FeesPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/liquidity" 
+                    element={
+                      <ProtectedRoute>
+                        <LiquidityPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/fiat-deposits" 
+                    element={
+                      <ProtectedRoute>
+                        <FiatDepositsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/staking" 
+                    element={
+                      <ProtectedRoute>
+                        <StakingPage />
                       </ProtectedRoute>
                     } 
                   />

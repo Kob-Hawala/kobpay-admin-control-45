@@ -10,7 +10,7 @@ export default function StakingPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Staking Management</h1>
           <p className="text-muted-foreground">
-            Manage staking plans, track metrics, and control user staking.
+            Manage staking plans, track metrics, and oversee user participation.
           </p>
         </div>
         <StakingManagement />

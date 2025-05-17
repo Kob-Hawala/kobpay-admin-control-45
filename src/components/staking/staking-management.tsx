@@ -5,8 +5,7 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle, 
-  CardFooter
+  CardTitle 
 } from "@/components/ui/card";
 import { 
   Table, 
@@ -16,6 +15,8 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -34,29 +35,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { 
-  Package, 
-  Users, 
-  Plus, 
-  Search, 
-  Filter, 
-  Trash2, 
-  Clock, 
-  Unlock, 
-  AlertTriangle,
-  Edit
-} from "lucide-react";
 import { toast } from "sonner";
-import { 
-  mockStakingPlans, 
-  mockUserStakes, 
-  mockStakingMetrics,
-  StakingPlan,
-  UserStake
-} from "@/data/mock-staking-data";
+import { Search, Plus, Check, X, Lock, Unlock, Calendar, Package } from "lucide-react";
+import { mockStakingPlans, mockUserStakes, mockStakingMetrics, StakingPlan, UserStake } from "@/data/mock-staking-data";
 
 export default function StakingManagement() {
   const [plans, setPlans] = useState<StakingPlan[]>(mockStakingPlans);
@@ -64,201 +45,206 @@ export default function StakingManagement() {
   const [metrics] = useState(mockStakingMetrics);
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [assetFilter, setAssetFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [assetFilter, setAssetFilter] = useState<string | null>(null);
   
-  const [showPlanDialog, setShowPlanDialog] = useState(false);
-  const [showEndStakeDialog, setShowEndStakeDialog] = useState(false);
-  const [showEndAllStakesDialog, setShowEndAllStakesDialog] = useState(false);
   const [editingPlan, setEditingPlan] = useState<StakingPlan | null>(null);
-  const [selectedStake, setSelectedStake] = useState<UserStake | null>(null);
-  
+  const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
   const [newPlan, setNewPlan] = useState<Partial<StakingPlan>>({
     name: "",
     asset: "BTC",
     lockDuration: 30,
     yieldPercentage: 5,
     minAmount: 0.1,
-    active: true
+    active: true,
   });
-
-  // Unique assets for filtering
-  const uniqueAssets = [...new Set(plans.map(plan => plan.asset))];
+  
+  const [cancelStake, setCancelStake] = useState<UserStake | null>(null);
+  const [completeStake, setCompleteStake] = useState<UserStake | null>(null);
   
   // Filter stakes
-  const filteredStakes = stakes.filter(stake => {
+  const filteredStakes = stakes.filter((stake) => {
     const matchesSearch = 
       stake.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      stake.userId.toLowerCase().includes(searchTerm.toLowerCase());
+      stake.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      stake.planName.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesAsset = assetFilter ? stake.asset === assetFilter : true;
     const matchesStatus = statusFilter ? stake.status === statusFilter : true;
+    const matchesAsset = assetFilter ? stake.asset === assetFilter : true;
     
-    return matchesSearch && matchesAsset && matchesStatus;
+    return matchesSearch && matchesStatus && matchesAsset;
   });
 
-  // Create or update a staking plan
+  // Unique lists for filters
+  const uniqueAssets = [...new Set([...plans.map(p => p.asset), ...stakes.map(s => s.asset)])];
+
+  // Handle save plan
   const handleSavePlan = () => {
     if (editingPlan) {
-      // Update existing plan
-      const updatedPlans = plans.map(plan => 
-        plan.id === editingPlan.id 
-          ? { 
-              ...editingPlan, 
-              ...newPlan,
-              updatedAt: new Date().toISOString() 
-            } 
-          : plan
-      );
-      
-      setPlans(updatedPlans);
-      toast.success(`Plan "${newPlan.name}" updated successfully`);
-    } else {
-      // Create new plan
-      const newPlanEntry: StakingPlan = {
-        id: `plan-${Math.floor(Math.random() * 10000).toString().padStart(3, '0')}`,
-        name: newPlan.name || "",
-        asset: newPlan.asset || "BTC",
-        lockDuration: newPlan.lockDuration || 30,
-        yieldPercentage: newPlan.yieldPercentage || 5,
-        minAmount: newPlan.minAmount || 0.1,
-        active: newPlan.active === undefined ? true : newPlan.active,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      
-      setPlans([newPlanEntry, ...plans]);
-      toast.success(`Plan "${newPlanEntry.name}" created successfully`);
+      setPlans(plans.map(p => p.id === editingPlan.id ? editingPlan : p));
+      toast.success(`Staking plan "${editingPlan.name}" updated successfully`);
+      setEditingPlan(null);
     }
+  };
+  
+  // Handle add new plan
+  const handleAddPlan = () => {
+    const id = `plan-${Math.floor(Math.random() * 10000).toString().padStart(3, '0')}`;
     
-    setShowPlanDialog(false);
-    setEditingPlan(null);
+    const newPlanEntry: StakingPlan = {
+      id,
+      name: newPlan.name || "New Plan",
+      asset: newPlan.asset || "BTC",
+      lockDuration: Number(newPlan.lockDuration) || 30,
+      yieldPercentage: Number(newPlan.yieldPercentage) || 5,
+      minAmount: Number(newPlan.minAmount) || 0.1,
+      active: newPlan.active !== undefined ? newPlan.active : true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    setPlans([...plans, newPlanEntry]);
+    setShowNewPlanDialog(false);
     setNewPlan({
       name: "",
       asset: "BTC",
       lockDuration: 30,
       yieldPercentage: 5,
       minAmount: 0.1,
-      active: true
+      active: true,
     });
+    
+    toast.success("New staking plan created successfully");
   };
-
-  // Toggle plan active status
-  const togglePlanStatus = (planId: string) => {
-    const updatedPlans = plans.map(plan => 
-      plan.id === planId 
-        ? { ...plan, active: !plan.active, updatedAt: new Date().toISOString() } 
-        : plan
-    );
+  
+  // Handle toggle plan status
+  const handleTogglePlanStatus = (plan: StakingPlan) => {
+    const updatedPlan = { ...plan, active: !plan.active, updatedAt: new Date().toISOString() };
+    setPlans(plans.map(p => p.id === plan.id ? updatedPlan : p));
     
-    setPlans(updatedPlans);
-    
-    const plan = plans.find(p => p.id === planId);
-    if (plan) {
-      toast.success(`Plan "${plan.name}" ${plan.active ? 'disabled' : 'activated'} successfully`);
-    }
+    toast.success(`Plan "${plan.name}" ${updatedPlan.active ? 'activated' : 'deactivated'}`);
   };
-
-  // Edit an existing plan
-  const handleEditPlan = (plan: StakingPlan) => {
-    setEditingPlan(plan);
-    setNewPlan({
-      name: plan.name,
-      asset: plan.asset,
-      lockDuration: plan.lockDuration,
-      yieldPercentage: plan.yieldPercentage,
-      minAmount: plan.minAmount,
-      active: plan.active
-    });
-    setShowPlanDialog(true);
-  };
-
-  // Delete a plan
-  const handleDeletePlan = (planId: string) => {
-    const planToDelete = plans.find(p => p.id === planId);
-    
-    // Check if there are active stakes for this plan
-    const hasActiveStakes = stakes.some(stake => stake.planId === planId && stake.status === "active");
-    
-    if (hasActiveStakes) {
-      toast.error("Cannot delete plan with active stakes");
-      return;
-    }
-    
-    setPlans(plans.filter(plan => plan.id !== planId));
-    
-    if (planToDelete) {
-      toast.success(`Plan "${planToDelete.name}" deleted successfully`);
-    }
-  };
-
-  // End a single stake
-  const handleEndStake = () => {
-    if (selectedStake) {
-      const updatedStakes = stakes.map(stake => 
-        stake.id === selectedStake.id 
-          ? { ...stake, status: "cancelled" as const, remainingDays: 0 } 
-          : stake
-      );
+  
+  // Handle cancel stake
+  const handleCancelStake = () => {
+    if (cancelStake) {
+      const updatedStake = {
+        ...cancelStake,
+        status: "cancelled" as const,
+        remainingDays: 0
+      };
       
-      setStakes(updatedStakes);
-      toast.success(`Stake ${selectedStake.id} for ${selectedStake.userName} has been cancelled`);
-      setSelectedStake(null);
-      setShowEndStakeDialog(false);
+      setStakes(stakes.map(s => s.id === updatedStake.id ? updatedStake : s));
+      toast.success(`Stake for ${cancelStake.userName} has been cancelled`);
+      setCancelStake(null);
     }
   };
-
-  // End all stakes (admin action)
-  const handleEndAllStakes = () => {
-    const updatedStakes = stakes.map(stake => 
-      stake.status === "active" 
-        ? { ...stake, status: "cancelled" as const, remainingDays: 0 } 
-        : stake
-    );
-    
-    setStakes(updatedStakes);
-    toast.success("All active stakes have been cancelled");
-    setShowEndAllStakesDialog(false);
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch(status) {
-      case "active":
-        return <Badge className="bg-green-500 hover:bg-green-600">Active</Badge>;
-      case "completed":
-        return <Badge className="bg-blue-500 hover:bg-blue-600">Completed</Badge>;
-      case "cancelled":
-        return <Badge className="bg-red-500 hover:bg-red-600">Cancelled</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
+  
+  // Handle complete stake
+  const handleCompleteStake = () => {
+    if (completeStake) {
+      const updatedStake = {
+        ...completeStake,
+        status: "completed" as const,
+        remainingDays: 0
+      };
+      
+      setStakes(stakes.map(s => s.id === updatedStake.id ? updatedStake : s));
+      toast.success(`Stake for ${completeStake.userName} has been completed`);
+      setCompleteStake(null);
     }
+  };
+  
+  // Calculate total staked value across all assets
+  const calculateTotalStakedValue = () => {
+    let total = 0;
+    Object.entries(metrics.totalStaked).forEach(([asset, amount]) => {
+      // This is a simplified calculation. In a real app, you'd use current market prices
+      switch (asset) {
+        case 'BTC': total += amount * 70000; break; // Example BTC price
+        case 'ETH': total += amount * 3500; break;  // Example ETH price
+        case 'USDT': 
+        case 'USDC': total += amount; break;        // Stablecoins
+        case 'SOL': total += amount * 150; break;   // Example SOL price
+        default: break;
+      }
+    });
+    return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
   };
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="plans">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Staked Value</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{calculateTotalStakedValue()}</div>
+            <p className="text-xs text-muted-foreground">
+              Across all assets and users
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+            <Check className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics.totalUsers}</div>
+            <p className="text-xs text-muted-foreground">
+              {metrics.activeStakes} active stakes
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Yield Paid</CardTitle>
+            <Lock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {Object.entries(metrics.totalYieldPaid)
+                .filter(([asset]) => asset === 'BTC')
+                .map(([, amount]) => `${amount} BTC`)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              + various other assets
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed Stakes</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics.completedStakes}</div>
+            <p className="text-xs text-muted-foreground">
+              {metrics.cancelledStakes} cancelled stakes
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <Tabs defaultValue="plans" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="plans">
-            <Package className="h-4 w-4 mr-2" />
-            Staking Plans
-          </TabsTrigger>
-          <TabsTrigger value="stakes">
-            <Users className="h-4 w-4 mr-2" />
-            User Stakes
-          </TabsTrigger>
-          <TabsTrigger value="metrics">
-            <Filter className="h-4 w-4 mr-2" />
-            Staking Metrics
-          </TabsTrigger>
+          <TabsTrigger value="plans">Staking Plans</TabsTrigger>
+          <TabsTrigger value="stakes">User Stakes</TabsTrigger>
         </TabsList>
         
-        {/* Plans Tab */}
-        <TabsContent value="plans" className="space-y-6 mt-6">
+        <TabsContent value="plans" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium">Manage Staking Plans</h3>
-            <Button onClick={() => setShowPlanDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create New Plan
+            <div className="flex-1 text-lg font-semibold">
+              Manage Staking Plans
+            </div>
+            <Button onClick={() => setShowNewPlanDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" /> Add New Plan
             </Button>
           </div>
           
@@ -269,73 +255,58 @@ export default function StakingManagement() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Asset</TableHead>
-                    <TableHead>Lock Period</TableHead>
-                    <TableHead>APR</TableHead>
+                    <TableHead>Duration</TableHead>
+                    <TableHead>Yield %</TableHead>
                     <TableHead>Min Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {plans.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
-                        No staking plans available
+                  {plans.map((plan) => (
+                    <TableRow key={plan.id}>
+                      <TableCell className="font-medium">{plan.name}</TableCell>
+                      <TableCell>{plan.asset}</TableCell>
+                      <TableCell>{plan.lockDuration} days</TableCell>
+                      <TableCell>{plan.yieldPercentage}%</TableCell>
+                      <TableCell>{plan.minAmount} {plan.asset}</TableCell>
+                      <TableCell>
+                        <Badge className={plan.active ? "bg-green-500" : "bg-gray-500"}>
+                          {plan.active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingPlan(plan)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant={plan.active ? "destructive" : "default"}
+                            size="sm"
+                            onClick={() => handleTogglePlanStatus(plan)}
+                          >
+                            {plan.active ? 'Deactivate' : 'Activate'}
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    plans.map((plan) => (
-                      <TableRow key={plan.id}>
-                        <TableCell className="font-medium">
-                          {plan.name}
-                        </TableCell>
-                        <TableCell>{plan.asset}</TableCell>
-                        <TableCell>{plan.lockDuration} days</TableCell>
-                        <TableCell>{plan.yieldPercentage}%</TableCell>
-                        <TableCell>
-                          {plan.minAmount} {plan.asset}
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={plan.active}
-                            onCheckedChange={() => togglePlanStatus(plan.id)}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditPlan(plan)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-500 hover:text-red-700"
-                              onClick={() => handleDeletePlan(plan.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                  ))}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </TabsContent>
         
-        {/* Stakes Tab */}
-        <TabsContent value="stakes" className="space-y-6 mt-6">
+        <TabsContent value="stakes" className="space-y-4">
           <div className="flex justify-between items-center">
             <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by user..."
+                placeholder="Search stakes..."
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -343,21 +314,6 @@ export default function StakingManagement() {
             </div>
             
             <div className="flex items-center space-x-2">
-              <Select 
-                value={assetFilter || "none"} 
-                onValueChange={(value) => setAssetFilter(value === "none" ? null : value)}
-              >
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue placeholder="Asset" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">All assets</SelectItem>
-                  {uniqueAssets.map(asset => (
-                    <SelectItem key={asset} value={asset}>{asset}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
               <Select 
                 value={statusFilter || "none"} 
                 onValueChange={(value) => setStatusFilter(value === "none" ? null : value)}
@@ -373,24 +329,25 @@ export default function StakingManagement() {
                 </SelectContent>
               </Select>
               
-              <Button 
-                variant="destructive"
-                onClick={() => setShowEndAllStakesDialog(true)}
+              <Select 
+                value={assetFilter || "none"} 
+                onValueChange={(value) => setAssetFilter(value === "none" ? null : value)}
               >
-                <Unlock className="h-4 w-4 mr-2" />
-                End All Stakes
-              </Button>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="Asset" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">All assets</SelectItem>
+                  {uniqueAssets.map(asset => (
+                    <SelectItem key={asset} value={asset}>{asset}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
           <Card>
-            <CardHeader>
-              <CardTitle>User Stakes</CardTitle>
-              <CardDescription>
-                View and manage individual staking positions by users.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -398,9 +355,9 @@ export default function StakingManagement() {
                     <TableHead>Plan</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Start Date</TableHead>
-                    <TableHead>Remaining</TableHead>
-                    <TableHead>Yield Earned</TableHead>
+                    <TableHead>End Date</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Yield Earned</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -419,42 +376,44 @@ export default function StakingManagement() {
                           <div className="text-xs text-muted-foreground">{stake.userId}</div>
                         </TableCell>
                         <TableCell>{stake.planName}</TableCell>
+                        <TableCell>{stake.amount} {stake.asset}</TableCell>
+                        <TableCell>{new Date(stake.startDate).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(stake.endDate).toLocaleDateString()}</TableCell>
                         <TableCell>
-                          {stake.amount} {stake.asset}
+                          <Badge 
+                            className={
+                              stake.status === 'active' ? "bg-green-500" :
+                              stake.status === 'completed' ? "bg-blue-500" :
+                              "bg-red-500"
+                            }
+                          >
+                            {stake.status.charAt(0).toUpperCase() + stake.status.slice(1)}
+                          </Badge>
                         </TableCell>
-                        <TableCell>
-                          {new Date(stake.startDate).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          {stake.status === "active" ? (
-                            <div className="flex items-center">
-                              <Clock className="h-4 w-4 mr-1" />
-                              {stake.remainingDays} days
-                            </div>
-                          ) : (
-                            "Ended"
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {stake.yieldEarned} {stake.asset}
-                        </TableCell>
-                        <TableCell>
-                          {getStatusBadge(stake.status)}
-                        </TableCell>
+                        <TableCell>{stake.yieldEarned} {stake.asset}</TableCell>
                         <TableCell className="text-right">
-                          {stake.status === "active" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-amber-500 hover:text-amber-700"
-                              onClick={() => {
-                                setSelectedStake(stake);
-                                setShowEndStakeDialog(true);
-                              }}
-                            >
-                              <Unlock className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <div className="flex justify-end space-x-2">
+                            {stake.status === 'active' && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-orange-500"
+                                  onClick={() => setCancelStake(stake)}
+                                >
+                                  <X className="h-4 w-4 mr-1" /> Cancel
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-green-500"
+                                  onClick={() => setCompleteStake(stake)}
+                                >
+                                  <Check className="h-4 w-4 mr-1" /> Complete
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
@@ -464,184 +423,125 @@ export default function StakingManagement() {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        {/* Metrics Tab */}
-        <TabsContent value="metrics" className="space-y-6 mt-6">
-          <h3 className="text-lg font-medium">Staking Platform Metrics</h3>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Total Users</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{metrics.totalUsers}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Active Stakes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{metrics.activeStakes}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Completed Stakes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{metrics.completedStakes}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Cancelled Stakes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{metrics.cancelledStakes}</div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Staked by Asset</CardTitle>
-                <CardDescription>
-                  Current staking amounts across assets
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Asset</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {Object.entries(metrics.totalStaked).map(([asset, amount]) => (
-                      <TableRow key={asset}>
-                        <TableCell className="font-medium">{asset}</TableCell>
-                        <TableCell className="text-right">{amount.toLocaleString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Yield Paid</CardTitle>
-                <CardDescription>
-                  Total yield distributed to stakers
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Asset</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {Object.entries(metrics.totalYieldPaid).map(([asset, amount]) => (
-                      <TableRow key={asset}>
-                        <TableCell className="font-medium">{asset}</TableCell>
-                        <TableCell className="text-right">{amount.toLocaleString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Staking Plans Distribution</CardTitle>
-              <CardDescription>
-                Active staking plans and participation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Plan Name</TableHead>
-                    <TableHead>Asset</TableHead>
-                    <TableHead>Active Stakes</TableHead>
-                    <TableHead>Total Value</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {plans.map((plan) => {
-                    const planStakes = stakes.filter(s => s.planId === plan.id && s.status === "active");
-                    const totalValue = planStakes.reduce((sum, stake) => sum + stake.amount, 0);
-                    
-                    return (
-                      <TableRow key={plan.id}>
-                        <TableCell className="font-medium">{plan.name}</TableCell>
-                        <TableCell>{plan.asset}</TableCell>
-                        <TableCell>{planStakes.length}</TableCell>
-                        <TableCell>{totalValue.toLocaleString()} {plan.asset}</TableCell>
-                        <TableCell>
-                          {plan.active ? (
-                            <Badge className="bg-green-500 hover:bg-green-600">Active</Badge>
-                          ) : (
-                            <Badge variant="outline">Disabled</Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
       
-      {/* Create/Edit Plan Dialog */}
-      <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
+      {/* Edit Plan Dialog */}
+      <Dialog open={!!editingPlan} onOpenChange={(open) => !open && setEditingPlan(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editingPlan ? "Edit Staking Plan" : "Create New Staking Plan"}
-            </DialogTitle>
+            <DialogTitle>Edit Staking Plan</DialogTitle>
             <DialogDescription>
-              {editingPlan 
-                ? "Update the details of the staking plan." 
-                : "Configure a new staking plan for users."}
+              Make changes to the staking plan parameters.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingPlan && (
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Plan Name</Label>
+                <Input
+                  id="name"
+                  value={editingPlan.name}
+                  onChange={(e) => setEditingPlan({...editingPlan, name: e.target.value})}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="asset">Asset</Label>
+                  <Select 
+                    value={editingPlan.asset} 
+                    onValueChange={(value) => setEditingPlan({...editingPlan, asset: value})}
+                  >
+                    <SelectTrigger id="asset">
+                      <SelectValue placeholder="Select asset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BTC">BTC</SelectItem>
+                      <SelectItem value="ETH">ETH</SelectItem>
+                      <SelectItem value="USDT">USDT</SelectItem>
+                      <SelectItem value="USDC">USDC</SelectItem>
+                      <SelectItem value="SOL">SOL</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="lockDuration">Lock Duration (days)</Label>
+                  <Input
+                    id="lockDuration"
+                    type="number"
+                    value={editingPlan.lockDuration}
+                    onChange={(e) => setEditingPlan({...editingPlan, lockDuration: Number(e.target.value)})}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="yieldPercentage">Yield Percentage</Label>
+                  <Input
+                    id="yieldPercentage"
+                    type="number"
+                    value={editingPlan.yieldPercentage}
+                    onChange={(e) => setEditingPlan({...editingPlan, yieldPercentage: Number(e.target.value)})}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="minAmount">Minimum Amount</Label>
+                  <Input
+                    id="minAmount"
+                    type="number"
+                    step="0.01"
+                    value={editingPlan.minAmount}
+                    onChange={(e) => setEditingPlan({...editingPlan, minAmount: Number(e.target.value)})}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="active">Active</Label>
+                <input
+                  id="active"
+                  type="checkbox"
+                  checked={editingPlan.active}
+                  onChange={(e) => setEditingPlan({...editingPlan, active: e.target.checked})}
+                  className="ml-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingPlan(null)}>Cancel</Button>
+            <Button onClick={handleSavePlan}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* New Plan Dialog */}
+      <Dialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Staking Plan</DialogTitle>
+            <DialogDescription>
+              Define the parameters for a new staking plan.
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Plan Name</Label>
+              <Label htmlFor="new-name">Plan Name</Label>
               <Input
-                id="name"
-                placeholder="Enter plan name"
-                value={newPlan.name || ""}
+                id="new-name"
+                value={newPlan.name}
                 onChange={(e) => setNewPlan({...newPlan, name: e.target.value})}
               />
             </div>
-            
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="asset">Asset</Label>
+                <Label htmlFor="new-asset">Asset</Label>
                 <Select 
                   value={newPlan.asset} 
                   onValueChange={(value) => setNewPlan({...newPlan, asset: value})}
                 >
-                  <SelectTrigger id="asset">
+                  <SelectTrigger id="new-asset">
                     <SelectValue placeholder="Select asset" />
                   </SelectTrigger>
                   <SelectContent>
@@ -653,208 +553,143 @@ export default function StakingManagement() {
                   </SelectContent>
                 </Select>
               </div>
-              
               <div className="grid gap-2">
-                <Label htmlFor="lockDuration">Lock Duration (days)</Label>
+                <Label htmlFor="new-lockDuration">Lock Duration (days)</Label>
                 <Input
-                  id="lockDuration"
+                  id="new-lockDuration"
                   type="number"
-                  min="1"
-                  placeholder="Enter lock duration"
-                  value={newPlan.lockDuration || ""}
-                  onChange={(e) => setNewPlan({
-                    ...newPlan, 
-                    lockDuration: parseInt(e.target.value) || 0
-                  })}
+                  value={newPlan.lockDuration}
+                  onChange={(e) => setNewPlan({...newPlan, lockDuration: Number(e.target.value)})}
                 />
               </div>
             </div>
-            
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="yieldPercentage">Yield Percentage (%)</Label>
+                <Label htmlFor="new-yieldPercentage">Yield Percentage</Label>
                 <Input
-                  id="yieldPercentage"
+                  id="new-yieldPercentage"
                   type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="Enter yield percentage"
-                  value={newPlan.yieldPercentage || ""}
-                  onChange={(e) => setNewPlan({
-                    ...newPlan, 
-                    yieldPercentage: parseFloat(e.target.value) || 0
-                  })}
+                  value={newPlan.yieldPercentage}
+                  onChange={(e) => setNewPlan({...newPlan, yieldPercentage: Number(e.target.value)})}
                 />
               </div>
-              
               <div className="grid gap-2">
-                <Label htmlFor="minAmount">Minimum Amount</Label>
+                <Label htmlFor="new-minAmount">Minimum Amount</Label>
                 <Input
-                  id="minAmount"
+                  id="new-minAmount"
                   type="number"
                   step="0.01"
-                  min="0"
-                  placeholder="Enter minimum amount"
-                  value={newPlan.minAmount || ""}
-                  onChange={(e) => setNewPlan({
-                    ...newPlan, 
-                    minAmount: parseFloat(e.target.value) || 0
-                  })}
+                  value={newPlan.minAmount}
+                  onChange={(e) => setNewPlan({...newPlan, minAmount: Number(e.target.value)})}
                 />
               </div>
             </div>
-            
             <div className="flex items-center space-x-2">
-              <Switch
-                id="active"
+              <Label htmlFor="new-active">Active</Label>
+              <input
+                id="new-active"
+                type="checkbox"
                 checked={newPlan.active}
-                onCheckedChange={(checked) => setNewPlan({...newPlan, active: checked})}
+                onChange={(e) => setNewPlan({...newPlan, active: e.target.checked})}
+                className="ml-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
-              <Label htmlFor="active">Plan Active</Label>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setShowPlanDialog(false);
-              setEditingPlan(null);
-              setNewPlan({
-                name: "",
-                asset: "BTC",
-                lockDuration: 30,
-                yieldPercentage: 5,
-                minAmount: 0.1,
-                active: true
-              });
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSavePlan}
-              disabled={!newPlan.name || !newPlan.lockDuration || !newPlan.yieldPercentage}
-            >
-              {editingPlan ? "Update Plan" : "Create Plan"}
-            </Button>
+            <Button variant="outline" onClick={() => setShowNewPlanDialog(false)}>Cancel</Button>
+            <Button onClick={handleAddPlan} disabled={!newPlan.name}>Create Plan</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
-      {/* End Stake Dialog */}
-      <Dialog open={showEndStakeDialog} onOpenChange={setShowEndStakeDialog}>
+      {/* Cancel Stake Dialog */}
+      <Dialog open={!!cancelStake} onOpenChange={() => setCancelStake(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>End User Stake</DialogTitle>
+            <DialogTitle>Cancel Stake</DialogTitle>
             <DialogDescription>
-              Are you sure you want to end this staking position? This will cancel the stake and release funds.
+              Are you sure you want to cancel this stake? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           
-          {selectedStake && (
+          {cancelStake && (
             <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="text-muted-foreground">User:</div>
-                  <div className="font-medium">{selectedStake.userName}</div>
-                  
-                  <div className="text-muted-foreground">Plan:</div>
-                  <div className="font-medium">{selectedStake.planName}</div>
-                  
-                  <div className="text-muted-foreground">Amount:</div>
-                  <div className="font-medium">
-                    {selectedStake.amount} {selectedStake.asset}
-                  </div>
-                  
-                  <div className="text-muted-foreground">Start Date:</div>
-                  <div className="font-medium">
-                    {new Date(selectedStake.startDate).toLocaleDateString()}
-                  </div>
-                  
-                  <div className="text-muted-foreground">Yield Earned:</div>
-                  <div className="font-medium">
-                    {selectedStake.yieldEarned} {selectedStake.asset}
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>User</Label>
+                  <div className="font-medium">{cancelStake.userName}</div>
+                </div>
+                <div>
+                  <Label>Plan</Label>
+                  <div className="font-medium">{cancelStake.planName}</div>
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-2 bg-yellow-100 dark:bg-yellow-900 p-3 rounded-md">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                <span className="text-sm text-yellow-800 dark:text-yellow-300">
-                  This action cannot be undone and may affect user experience.
-                </span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Amount</Label>
+                  <div className="font-medium">{cancelStake.amount} {cancelStake.asset}</div>
+                </div>
+                <div>
+                  <Label>Yield Earned</Label>
+                  <div className="font-medium">{cancelStake.yieldEarned} {cancelStake.asset}</div>
+                </div>
               </div>
             </div>
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setShowEndStakeDialog(false);
-              setSelectedStake(null);
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={handleEndStake}
-            >
-              <Unlock className="h-4 w-4 mr-2" />
-              End Stake
+            <Button variant="outline" onClick={() => setCancelStake(null)}>No, Keep Stake</Button>
+            <Button variant="destructive" onClick={handleCancelStake}>
+              Yes, Cancel Stake
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
-      {/* End All Stakes Dialog */}
-      <Dialog open={showEndAllStakesDialog} onOpenChange={setShowEndAllStakesDialog}>
+      {/* Complete Stake Dialog */}
+      <Dialog open={!!completeStake} onOpenChange={() => setCompleteStake(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>End All Active Stakes</DialogTitle>
+            <DialogTitle>Complete Stake Early</DialogTitle>
             <DialogDescription>
-              WARNING: This will cancel ALL active staking positions and release funds to users immediately.
+              Are you sure you want to complete this stake before its end date? The user will receive their current yield.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="py-4">
-            <div className="flex items-center space-x-2 bg-red-100 dark:bg-red-900 p-3 rounded-md mb-4">
-              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-              <span className="text-sm text-red-800 dark:text-red-300">
-                This is an emergency action that will affect all users. Please confirm carefully.
-              </span>
-            </div>
-            
-            <div className="space-y-2">
-              <p className="text-muted-foreground">Active stakes:</p>
-              <p className="font-medium">{stakes.filter(s => s.status === "active").length}</p>
-              
-              <p className="text-muted-foreground">Total staked value affected:</p>
-              <div className="space-y-1">
-                {Object.entries(
-                  stakes
-                    .filter(s => s.status === "active")
-                    .reduce((acc: Record<string, number>, stake) => {
-                      acc[stake.asset] = (acc[stake.asset] || 0) + stake.amount;
-                      return acc;
-                    }, {})
-                ).map(([asset, amount]) => (
-                  <p key={asset} className="font-medium">
-                    {amount.toLocaleString()} {asset}
-                  </p>
-                ))}
+          {completeStake && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>User</Label>
+                  <div className="font-medium">{completeStake.userName}</div>
+                </div>
+                <div>
+                  <Label>Plan</Label>
+                  <div className="font-medium">{completeStake.planName}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Amount</Label>
+                  <div className="font-medium">{completeStake.amount} {completeStake.asset}</div>
+                </div>
+                <div>
+                  <Label>Yield Earned</Label>
+                  <div className="font-medium">{completeStake.yieldEarned} {completeStake.asset}</div>
+                </div>
+              </div>
+              <div>
+                <Label>Remaining Time</Label>
+                <div className="font-medium">{completeStake.remainingDays} days</div>
               </div>
             </div>
-          </div>
+          )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setShowEndAllStakesDialog(false);
-            }}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={handleEndAllStakes}
-            >
-              <Unlock className="h-4 w-4 mr-2" />
-              End All Stakes
+            <Button variant="outline" onClick={() => setCompleteStake(null)}>Cancel</Button>
+            <Button onClick={handleCompleteStake}>
+              Complete Stake
             </Button>
           </DialogFooter>
         </DialogContent>
