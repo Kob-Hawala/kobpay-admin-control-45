@@ -28,7 +28,7 @@ export default function KycRequestDetails({ request, onStatusChange }: KycReques
   const handleApprove = () => {
     const updatedRequest = {
       ...request,
-      status: "approved",
+      status: "approved" as const,
       reviewedAt: new Date().toISOString(),
       reviewedBy: {
         id: "admin-1",
@@ -67,7 +67,7 @@ export default function KycRequestDetails({ request, onStatusChange }: KycReques
 
     const updatedRequest = {
       ...request,
-      status: "rejected",
+      status: "rejected" as const,
       reviewedAt: new Date().toISOString(),
       reviewedBy: {
         id: "admin-1",
