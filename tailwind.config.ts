@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Galaxy theme custom colors
+				galaxy: {
+					'blue': '#1a2b4b',
+					'purple': '#4a3b76',
+					'indigo': '#2d3250',
+          'accent': '#7e57c2',
+          'success': '#4ade80',
+          'warning': '#fbbf24',
+          'danger': '#f43f5e',
+          'info': '#38bdf8'
 				}
 			},
 			borderRadius: {
@@ -84,12 +96,21 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'pulse-slow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' }
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+			},
+      backgroundImage: {
+        'galaxy-gradient': 'linear-gradient(to right bottom, #1a2b4b, #2d3250, #4a3b76)',
+        'galaxy-light': 'linear-gradient(to right bottom, #f8fafc, #e2e8f0, #cbd5e1)'
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
