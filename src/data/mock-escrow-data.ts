@@ -1,0 +1,87 @@
+
+export const escrowData = [
+  {
+    id: "esc_8f7d1a2b3c4d5e",
+    buyer: "John Smith",
+    seller: "Crypto Merchant Inc",
+    amount: "0.45",
+    crypto: "BTC",
+    fiatAmount: "25,000",
+    fiatCurrency: "USD",
+    status: "pending",
+    created: "2025-05-16T15:30:00Z",
+    expires: "2025-05-19T15:30:00Z",
+    timeRemaining: "48h 12m",
+    hasFiatProof: true
+  },
+  {
+    id: "esc_3e9b4c5d6e7f8g",
+    buyer: "Alice Johnson",
+    seller: "Blockchain Solutions",
+    amount: "5.25",
+    crypto: "ETH",
+    fiatAmount: "12,500",
+    fiatCurrency: "USD",
+    status: "pending",
+    created: "2025-05-15T10:45:00Z",
+    expires: "2025-05-18T10:45:00Z",
+    timeRemaining: "24h 3m",
+    hasFiatProof: true
+  },
+  {
+    id: "esc_6a2f9d8e7c6b5a",
+    buyer: "Robert Wilson",
+    seller: "Crypto Direct LLC",
+    amount: "750",
+    crypto: "USDT",
+    fiatAmount: "750",
+    fiatCurrency: "USD",
+    status: "completed",
+    created: "2025-05-14T18:20:00Z",
+    expires: "2025-05-17T18:20:00Z",
+    timeRemaining: "0h 0m",
+    hasFiatProof: true
+  },
+  {
+    id: "esc_9d8c7b6a5f4e3d",
+    buyer: "Sarah Davis",
+    seller: "Digital Asset Exchange",
+    amount: "0.78",
+    crypto: "BTC",
+    fiatAmount: "43,000",
+    fiatCurrency: "USD",
+    status: "pending",
+    created: "2025-05-17T09:15:00Z",
+    expires: "2025-05-20T09:15:00Z",
+    timeRemaining: "72h 0m",
+    hasFiatProof: false
+  },
+  {
+    id: "esc_2b3c4d5e6f7g8h",
+    buyer: "Michael Brown",
+    seller: "Crypto Solutions Ltd",
+    amount: "12.5",
+    crypto: "ETH",
+    fiatAmount: "30,000",
+    fiatCurrency: "USD",
+    status: "cancelled",
+    created: "2025-05-13T14:50:00Z",
+    expires: "2025-05-16T14:50:00Z",
+    timeRemaining: "0h 0m",
+    hasFiatProof: false
+  },
+  {
+    id: "esc_5f4e3d2c1b9a8b",
+    buyer: "Jennifer Martinez",
+    seller: "Binance P2P Trader",
+    amount: "2,500",
+    crypto: "USDT",
+    fiatAmount: "2,500",
+    fiatCurrency: "USD",
+    status: "pending",
+    created: "2025-05-17T12:30:00Z",
+    expires: "2025-05-20T12:30:00Z",
+    timeRemaining: "68h 15m",
+    hasFiatProof: true
+  }
+];

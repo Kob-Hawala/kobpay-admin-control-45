@@ -16,6 +16,10 @@ import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import UsersPage from "./pages/admin/UsersPage";
 import KycPage from "./pages/admin/KycPage";
+import KobPayPage from "./pages/admin/KobPayPage";
+import EscrowPage from "./pages/admin/EscrowPage";
+import TransactionsPage from "./pages/admin/TransactionsPage";
+import FeesPage from "./pages/admin/FeesPage";
 import NotFound from "./pages/NotFound";
 
 // Create the query client
@@ -75,6 +79,38 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <KycPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/kobpay" 
+                    element={
+                      <ProtectedRoute>
+                        <KobPayPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/escrow" 
+                    element={
+                      <ProtectedRoute>
+                        <EscrowPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/transactions" 
+                    element={
+                      <ProtectedRoute>
+                        <TransactionsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/fees" 
+                    element={
+                      <ProtectedRoute>
+                        <FeesPage />
                       </ProtectedRoute>
                     } 
                   />
