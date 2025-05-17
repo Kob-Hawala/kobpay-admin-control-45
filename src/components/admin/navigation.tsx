@@ -11,7 +11,8 @@ import {
   Key,
   Lock,
   Clock,
-  Eye
+  Eye,
+  Store
 } from "lucide-react";
 import React from "react";
 
@@ -44,6 +45,11 @@ export function AdminNavigation() {
       label: "KOB Pay ID",
       path: "/admin/kobpay",
       icon: <Key className="h-5 w-5" />,
+    },
+    {
+      label: "P2P Trading",
+      path: "/admin/p2p",
+      icon: <Store className="h-5 w-5" />,
     },
     {
       label: "Escrow Control",

@@ -28,6 +28,7 @@ import NewsSettingsPage from "./pages/admin/NewsSettingsPage";
 import ApiSettingsPage from "./pages/admin/ApiSettingsPage";
 import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
+import P2PPage from "./pages/admin/P2PPage";
 import NotFound from "./pages/NotFound";
 
 // Create the query client
@@ -111,6 +112,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <EscrowPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/p2p" 
+                    element={
+                      <ProtectedRoute>
+                        <P2PPage />
                       </ProtectedRoute>
                     } 
                   />
