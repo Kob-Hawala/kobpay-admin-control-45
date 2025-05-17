@@ -13,6 +13,7 @@ import Index from "./pages/Index";
 import LoginPage from "./pages/admin/LoginPage";
 import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
+import UsersPage from "./pages/admin/UsersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <DashboardPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/users" 
+                element={
+                  <ProtectedRoute>
+                    <UsersPage />
                   </ProtectedRoute>
                 } 
               />
