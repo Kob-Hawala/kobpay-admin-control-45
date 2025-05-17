@@ -12,7 +12,8 @@ import {
   Lock,
   Clock,
   Eye,
-  Store
+  Store,
+  Bell
 } from "lucide-react";
 import React from "react";
 
@@ -33,82 +34,87 @@ export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
     {
       label: "Dashboard",
       path: "/admin/dashboard",
-      icon: <Database className="h-5 w-5" />,
+      icon: <Database className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Users",
       path: "/admin/users",
-      icon: <User className="h-5 w-5" />,
+      icon: <User className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "KYC Approval",
       path: "/admin/kyc",
-      icon: <Shield className="h-5 w-5" />,
+      icon: <Shield className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "KOB Pay ID",
       path: "/admin/kobpay",
-      icon: <Key className="h-5 w-5" />,
+      icon: <Key className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "P2P Trading",
       path: "/admin/p2p",
-      icon: <Store className="h-5 w-5" />,
+      icon: <Store className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
+    },
+    {
+      label: "Notifications",
+      path: "/admin/notifications",
+      icon: <Bell className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Escrow Control",
       path: "/admin/escrow",
-      icon: <Lock className="h-5 w-5" />,
+      icon: <Lock className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Transactions",
       path: "/admin/transactions",
-      icon: <File className="h-5 w-5" />,
+      icon: <File className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Fee Control",
       path: "/admin/fees",
-      icon: <Filter className="h-5 w-5" />,
+      icon: <Filter className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Fiat Deposits",
       path: "/admin/fiat-deposits",
-      icon: <File className="h-5 w-5" />,
+      icon: <File className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Vault Transfers",
       path: "/admin/liquidity",
-      icon: <Database className="h-5 w-5" />,
+      icon: <Database className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Staking",
       path: "/admin/staking",
-      icon: <Calendar className="h-5 w-5" />,
+      icon: <Calendar className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Exchange Rates",
       path: "/admin/exchange-rates",
-      icon: <Filter className="h-5 w-5" />,
+      icon: <Filter className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "News Feed",
       path: "/admin/news-settings",
-      icon: <Eye className="h-5 w-5" />,
+      icon: <Eye className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "API Settings",
       path: "/admin/api-settings",
-      icon: <Key className="h-5 w-5" />,
+      icon: <Key className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Activity Logs",
       path: "/admin/logs",
-      icon: <Clock className="h-5 w-5" />,
+      icon: <Clock className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
     {
       label: "Settings",
       path: "/admin/settings",
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Settings className="h-5 w-5 text-sidebar-foreground dark:text-gray-200" />,
     },
   ];
 

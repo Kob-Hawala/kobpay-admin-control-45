@@ -40,8 +40,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Real-time events handler (invisible component) */}
       <RealtimeEvents />
 
-      {/* Toast notifications provider */}
-      <Toaster position="top-right" richColors closeButton />
+      {/* Toast notifications provider - positioned in top-right only */}
+      <Toaster 
+        position="top-right" 
+        richColors 
+        closeButton
+        toastOptions={{
+          duration: 4000,
+          style: { background: 'var(--background)', color: 'var(--foreground)', border: '1px solid var(--border)' },
+        }}
+      />
 
       {/* Mobile sidebar toggle */}
       <MobileSidebarToggle 

@@ -14,9 +14,9 @@ export function ThemeToggle() {
       className="rounded-full"
     >
       {theme === "light" ? (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-5 w-5 text-foreground" />
       ) : (
-        <Sun className="h-5 w-5" />
+        <Sun className="h-5 w-5 text-gray-100" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

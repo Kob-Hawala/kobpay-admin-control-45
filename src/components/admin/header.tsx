@@ -26,7 +26,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
             onClick={toggleSidebar}
             className="mr-2 hidden md:flex"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5 text-foreground dark:text-gray-100" />
             <span className="sr-only">Toggle menu</span>
           </Button>
         </div>
@@ -38,7 +38,7 @@ export function Header({ toggleSidebar }: HeaderProps) {
 
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="rounded-full">
-            <Bell className="h-5 w-5" />
+            <Bell className="h-5 w-5 text-foreground dark:text-gray-100" />
           </Button>
 
           {/* User menu (desktop only) */}

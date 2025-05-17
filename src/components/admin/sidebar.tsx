@@ -86,7 +86,7 @@ export function Sidebar({ isSidebarOpen }: SidebarProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 text-sidebar-foreground dark:text-gray-100" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
