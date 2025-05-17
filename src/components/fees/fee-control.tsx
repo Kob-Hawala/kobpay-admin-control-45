@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Card, 
@@ -77,7 +76,7 @@ const FeeControl = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [newFee, setNewFee] = useState({
     name: "",
-    type: "flat",
+    type: "flat" as "flat" | "percentage",
     value: 0,
     assetType: "BTC",
     active: true
@@ -384,7 +383,11 @@ const FeeControl = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setSelectedFee(fee)}
+                            onClick={() => {
+                              // Fix: Make sure we're setting the correct type here
+                              const typedFee = fee as Fee;
+                              setSelectedFee(typedFee);
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>

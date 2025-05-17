@@ -186,14 +186,22 @@ const KobPayManagement = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setSelectedId(id)}
+                            onClick={() => {
+                              // Fix: Type assertion to ensure the status is of the correct type
+                              const typedId = {...id, status: id.status as "active" | "revoked"};
+                              setSelectedId(typedId as KobPayID);
+                            }}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setSelectedId(id)}
+                            onClick={() => {
+                              // Fix: Type assertion to ensure the status is of the correct type
+                              const typedId = {...id, status: id.status as "active" | "revoked"};
+                              setSelectedId(typedId as KobPayID);
+                            }}
                           >
                             <TrendingUp className="h-4 w-4" />
                           </Button>
