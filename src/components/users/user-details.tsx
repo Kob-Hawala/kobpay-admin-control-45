@@ -1,445 +1,482 @@
 
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { UserStatus } from "@/components/users/user-status";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { UserStatus } from "./user-status";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { 
-  Shield, 
-  Wallet, 
-  Clock, 
-  User, 
-  Ban,
-  CheckCircle
-} from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Eye, FileText, Wallet, Key, User, Clock, Shield, ArrowDown, ArrowUp } from "lucide-react";
 
-interface UserDetailsProps {
-  user: any;
+interface Transaction {
+  id: string;
+  type: string;
+  amount: number;
+  asset: string;
+  date: string;
+  status: string;
 }
 
-const updateLimitSchema = z.object({
-  dailyLimit: z.coerce
-    .number()
-    .min(0, "Limit cannot be negative")
-    .max(100000, "Limit cannot exceed $100,000"),
-  reason: z.string().min(5, "Please provide a reason for this change"),
-});
+interface UserDetailsProps {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    kobPayId?: string;
+    accountStatus: string;
+    kycStatus: string;
+    kycType?: string;
+    dailyLimit: number;
+    createdAt: string;
+    lastLogin?: string;
+    country?: string;
+    region?: string;
+    city?: string;
+    idType?: string;
+    idNumber?: string;
+    wallets?: {
+      asset: string;
+      balance: number;
+      address: string;
+    }[];
+    transactions?: Transaction[];
+    notes?: string[];
+  };
+}
 
 export function UserDetails({ user }: UserDetailsProps) {
-  const [isUpdatingLimit, setIsUpdatingLimit] = useState(false);
-  const [showSuspendDialog, setShowSuspendDialog] = useState(false);
-  const [showActivateDialog, setShowActivateDialog] = useState(false);
+  const [isActionDialogOpen, setIsActionDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState<"suspend" | "reactivate" | "limit">("suspend");
+  const [reason, setReason] = useState("");
+  const [dailyLimit, setDailyLimit] = useState(user.dailyLimit.toString());
 
-  const form = useForm<z.infer<typeof updateLimitSchema>>({
-    resolver: zodResolver(updateLimitSchema),
-    defaultValues: {
-      dailyLimit: user.dailyLimit,
-      reason: "",
-    },
-  });
-
-  const handleUpdateLimit = (values: z.infer<typeof updateLimitSchema>) => {
-    setIsUpdatingLimit(true);
-
-    // In a real app, we would call an API to update the limit
-    setTimeout(() => {
-      setIsUpdatingLimit(false);
-      toast.success(`Daily limit updated to $${values.dailyLimit}`);
-    }, 1000);
+  const handleAction = (type: "suspend" | "reactivate" | "limit") => {
+    setActionType(type);
+    setIsActionDialogOpen(true);
+    if (type === "limit") {
+      setDailyLimit(user.dailyLimit.toString());
+    } else {
+      setReason("");
+    }
   };
 
-  const handleSuspendAccount = () => {
-    toast.success(`Account suspended: ${user.email}`);
-    setShowSuspendDialog(false);
-  };
-
-  const handleActivateAccount = () => {
-    toast.success(`Account activated: ${user.email}`);
-    setShowActivateDialog(false);
+  const confirmAction = () => {
+    // In a real app, this would be an API call
+    console.log(`${actionType} user ${user.id}`, {
+      reason,
+      dailyLimit: actionType === "limit" ? parseFloat(dailyLimit) : undefined
+    });
+    setIsActionDialogOpen(false);
+    // Here we would update the UI based on the response
   };
 
   return (
     <div className="space-y-6">
-      {/* User Overview */}
-      <div className="flex flex-col md:flex-row gap-4 items-start">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl">
-          {user.name.charAt(0)}
+      {/* User header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-14 w-14">
+            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+              {user.name.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h3 className="text-lg font-semibold">{user.name}</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm">
+              <span className="text-muted-foreground">{user.email}</span>
+              <span className="hidden sm:inline text-muted-foreground">•</span>
+              <span className="text-muted-foreground">{user.phone}</span>
+            </div>
+          </div>
         </div>
-        <div className="flex-1">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-2xl font-bold">{user.name}</h2>
-              <p className="text-muted-foreground">{user.email}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <UserStatus status={user.accountStatus} />
-              <Badge 
-                variant={user.kycStatus === "verified" ? "success" : 
-                       user.kycStatus === "pending" ? "warning" : "destructive"}
-                className="capitalize"
-              >
-                {user.kycStatus}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-4">
-            <div>
-              <span className="text-sm text-muted-foreground">Registered</span>
-              <p>{new Date(user.createdAt).toLocaleDateString()}</p>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">KOB Pay ID</span>
-              <p className="font-mono">{user.kobPayId || "Not assigned"}</p>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Daily Limit</span>
-              <p>${user.dailyLimit.toLocaleString()}</p>
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={user.accountStatus === "active" ? "outline" : "default"}
+            onClick={() => handleAction(user.accountStatus === "active" ? "suspend" : "reactivate")}
+          >
+            {user.accountStatus === "active" ? "Suspend User" : "Reactivate User"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleAction("limit")}
+          >
+            Update Limits
+          </Button>
         </div>
       </div>
 
-      {/* User Details Tabs */}
-      <Tabs defaultValue="wallets">
-        <TabsList className="grid grid-cols-4 mb-4">
+      {/* User status indicators */}
+      <div className="flex flex-wrap gap-3">
+        <div className="bg-muted px-3 py-1 rounded-md flex items-center gap-2">
+          <User className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">ID: {user.id}</span>
+        </div>
+        
+        {user.kobPayId && (
+          <div className="bg-primary/10 text-primary px-3 py-1 rounded-md flex items-center gap-2">
+            <Key className="h-4 w-4" />
+            <span className="text-sm font-mono">{user.kobPayId}</span>
+          </div>
+        )}
+        
+        <div className="px-3 py-1 rounded-md flex items-center gap-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">Registered: {new Date(user.createdAt).toLocaleDateString()}</span>
+        </div>
+        
+        <div className="px-3 py-1 rounded-md flex items-center gap-2">
+          <Shield className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm">KYC: {user.kycType || "Not provided"}</span>
+        </div>
+
+        <div className="px-3 py-1 rounded-md">
+          <UserStatus status={user.accountStatus} />
+        </div>
+        
+        <div className="px-3 py-1 rounded-md">
+          <Badge variant={user.kycStatus === "verified" ? "success" : user.kycStatus === "pending" ? "warning" : "destructive"} className="capitalize">
+            {user.kycStatus}
+          </Badge>
+        </div>
+      </div>
+
+      {/* Tabs for different sections */}
+      <Tabs defaultValue="overview">
+        <TabsList className="grid grid-cols-3 md:grid-cols-5 mb-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="wallets">Wallets</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="kyc">KYC Info</TabsTrigger>
+          <TabsTrigger value="kyc">KYC Data</TabsTrigger>
           <TabsTrigger value="logs">Activity Logs</TabsTrigger>
         </TabsList>
 
-        {/* Wallets Tab */}
-        <TabsContent value="wallets">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {user.wallets.map((wallet: any) => (
-              <Card key={wallet.currency}>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base flex justify-between">
-                    <span>{wallet.currency}</span>
-                    <span className="text-xs bg-primary/10 px-1.5 py-0.5 rounded">
-                      {wallet.networkType}
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="font-mono text-xl">
-                    {wallet.balance} {wallet.currency}
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Account Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">Status</Label>
+                    <div className="font-medium mt-1 capitalize">{user.accountStatus}</div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    ≈ ${wallet.fiatEquivalent.toLocaleString()}
+                  <div>
+                    <Label className="text-muted-foreground">Daily Limit</Label>
+                    <div className="font-medium mt-1">${user.dailyLimit.toLocaleString()}</div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div>
+                    <Label className="text-muted-foreground">KYC Status</Label>
+                    <div className="font-medium mt-1 capitalize">{user.kycStatus}</div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">KYC Type</Label>
+                    <div className="font-medium mt-1">{user.kycType || "Not provided"}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">Full Name</Label>
+                    <div className="font-medium mt-1">{user.name}</div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Email</Label>
+                    <div className="font-medium mt-1">{user.email}</div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Phone</Label>
+                    <div className="font-medium mt-1">{user.phone}</div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Country</Label>
+                    <div className="font-medium mt-1">{user.country || "Unknown"}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Notes</CardTitle>
+              <CardDescription>Admin notes and observations about this user</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!user.notes || user.notes.length === 0 ? (
+                <p className="text-muted-foreground italic">No notes have been added for this user.</p>
+              ) : (
+                <div className="space-y-2">
+                  {user.notes.map((note, index) => (
+                    <div key={index} className="bg-muted p-3 rounded-md">
+                      <p>{note}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4">
+                <Button variant="outline" className="w-full">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Add Note
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Wallets Tab */}
+        <TabsContent value="wallets" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">User Wallets</CardTitle>
+              <CardDescription>Cryptocurrency balances for this user</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!user.wallets || user.wallets.length === 0 ? (
+                <p className="text-muted-foreground italic">No wallets found for this user.</p>
+              ) : (
+                <div className="space-y-4">
+                  {user.wallets.map((wallet, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium">{wallet.asset}</h4>
+                        <Badge variant="outline" className="font-mono">
+                          {wallet.balance.toFixed(8)}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Wallet className="h-3 w-3" />
+                        <span className="font-mono text-xs flex-1 truncate">{wallet.address}</span>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Transactions Tab */}
-        <TabsContent value="transactions">
+        <TabsContent value="transactions" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>
-                Last 5 transactions for this user
-              </CardDescription>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Transaction History</CardTitle>
+              <CardDescription>Recent transactions for this user</CardDescription>
             </CardHeader>
             <CardContent>
-              {user.transactions.length > 0 ? (
-                <div className="space-y-4">
-                  {user.transactions.map((tx: any) => (
-                    <div key={tx.id} className="border-b pb-4 last:border-0">
-                      <div className="flex justify-between">
-                        <div>
-                          <div className="font-medium">{tx.type}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(tx.date).toLocaleString()}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className={tx.amount > 0 ? "text-emerald-600" : ""}>
-                            {tx.amount > 0 ? "+" : ""}{tx.amount} {tx.currency}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            ${tx.fiatValue.toLocaleString()}
-                          </div>
-                        </div>
+              {!user.transactions || user.transactions.length === 0 ? (
+                <p className="text-muted-foreground italic">No transactions found for this user.</p>
+              ) : (
+                <div className="rounded-md border">
+                  <div className="grid grid-cols-5 gap-4 p-4 font-medium text-sm border-b">
+                    <div>Type</div>
+                    <div>Amount</div>
+                    <div>Asset</div>
+                    <div>Date</div>
+                    <div>Status</div>
+                  </div>
+                  {user.transactions.map((tx, index) => (
+                    <div key={index} className="grid grid-cols-5 gap-4 p-4 text-sm hover:bg-muted/50">
+                      <div className="flex items-center gap-2">
+                        {tx.type === "receive" ? (
+                          <ArrowDown className="h-4 w-4 text-emerald-500" />
+                        ) : (
+                          <ArrowUp className="h-4 w-4 text-blue-500" />
+                        )}
+                        <span className="capitalize">{tx.type}</span>
+                      </div>
+                      <div className="font-mono">{tx.amount.toFixed(8)}</div>
+                      <div>{tx.asset}</div>
+                      <div>{new Date(tx.date).toLocaleDateString()}</div>
+                      <div>
+                        <Badge variant={tx.status === "completed" ? "success" : tx.status === "pending" ? "warning" : "destructive"} className="capitalize">
+                          {tx.status}
+                        </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No transactions found for this user
-                </div>
               )}
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">View All Transactions</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
 
-        {/* KYC Tab */}
-        <TabsContent value="kyc">
+        {/* KYC Data Tab */}
+        <TabsContent value="kyc" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>KYC Information</CardTitle>
-              <CardDescription>
-                Verification status: 
-                <Badge 
-                  variant={user.kycStatus === "verified" ? "success" : 
-                         user.kycStatus === "pending" ? "warning" : "destructive"}
-                  className="ml-2 capitalize"
-                >
-                  {user.kycStatus}
-                </Badge>
-              </CardDescription>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">KYC Information</CardTitle>
+              <CardDescription>Know Your Customer verification data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">ID Type</Label>
+                  <div className="font-medium mt-1">{user.idType || "Not submitted"}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">ID Number</Label>
+                  <div className="font-medium mt-1">{user.idNumber || "Not submitted"}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Country</Label>
+                  <div className="font-medium mt-1">{user.country || "Not submitted"}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Region/State</Label>
+                  <div className="font-medium mt-1">{user.region || "Not submitted"}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">City</Label>
+                  <div className="font-medium mt-1">{user.city || "Not submitted"}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Status</Label>
+                  <div className="font-medium mt-1">
+                    <Badge variant={user.kycStatus === "verified" ? "success" : user.kycStatus === "pending" ? "warning" : "destructive"} className="capitalize">
+                      {user.kycStatus}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 space-y-4">
+                <h4 className="font-medium">ID Document</h4>
+                <div className="border border-dashed rounded-md flex items-center justify-center h-40">
+                  <div className="text-center">
+                    <Button variant="outline">
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Document
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {user.kycStatus === "verified" ? "Verified on " + new Date().toLocaleDateString() : "Pending review"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Activity Logs Tab */}
+        <TabsContent value="logs" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">User Activity</CardTitle>
+              <CardDescription>Recent user activities and system logs</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">Full Name</h4>
-                    <p>{user.name}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">Date of Birth</h4>
-                    <p>{user.kyc?.dob || "Not provided"}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">Nationality</h4>
-                    <p>{user.kyc?.nationality || "Not provided"}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">ID Type</h4>
-                    <p>{user.kyc?.idType || "Not provided"}</p>
-                  </div>
+                {/* Since we don't have actual log data, let's create some placeholder logs */}
+                <div className="border-l-2 border-green-500 pl-4 pb-6 relative">
+                  <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full bg-green-500"></div>
+                  <time className="text-xs text-muted-foreground mb-1 block">Today, 10:23 AM</time>
+                  <p className="text-sm">User logged in successfully from 192.168.1.1</p>
                 </div>
-
-                {user.kyc?.documents ? (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Verification Documents</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {user.kyc.documents.map((doc: any) => (
-                        <div key={doc.type} className="border rounded-md p-2">
-                          <div className="text-xs font-medium mb-1">{doc.type}</div>
-                          <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4 mr-1" />
-                              View
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-4 text-muted-foreground">
-                    No KYC documents uploaded
-                  </div>
-                )}
+                <div className="border-l-2 border-blue-500 pl-4 pb-6 relative">
+                  <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full bg-blue-500"></div>
+                  <time className="text-xs text-muted-foreground mb-1 block">Yesterday, 3:45 PM</time>
+                  <p className="text-sm">User updated their phone number from +233 XX XXX XXX to {user.phone}</p>
+                </div>
+                <div className="border-l-2 border-amber-500 pl-4 pb-6 relative">
+                  <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full bg-amber-500"></div>
+                  <time className="text-xs text-muted-foreground mb-1 block">March 15, 2025, 1:30 PM</time>
+                  <p className="text-sm">User submitted KYC documents for verification</p>
+                </div>
+                <div className="border-l-2 border-primary pl-4 pb-6 relative">
+                  <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full bg-primary"></div>
+                  <time className="text-xs text-muted-foreground mb-1 block">March 10, 2025, 11:15 AM</time>
+                  <p className="text-sm">Account created with email {user.email}</p>
+                </div>
               </div>
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">Go to KYC Approval Center</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        {/* Logs Tab */}
-        <TabsContent value="logs">
-          <Card>
-            <CardHeader>
-              <CardTitle>Activity Logs</CardTitle>
-              <CardDescription>
-                Recent user activity
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {user.activityLogs && user.activityLogs.length > 0 ? (
-                <div className="space-y-2">
-                  {user.activityLogs.map((log: any) => (
-                    <div key={log.id} className="text-sm border-b last:border-0 pb-2 pt-2">
-                      <div className="flex items-start gap-2">
-                        <Clock className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                        <div>
-                          <span className="text-muted-foreground">
-                            {new Date(log.timestamp).toLocaleString()}
-                          </span>
-                          <p>{log.action}</p>
-                          <p className="text-xs text-muted-foreground">IP: {log.ipAddress}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No activity logs found
-                </div>
-              )}
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">View Full Audit Trail</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>
 
-      {/* Admin Actions */}
-      <div className="border-t pt-6">
-        <h3 className="text-lg font-medium mb-4">Admin Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Transaction Limit Adjustment */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Adjust Daily Transaction Limit</CardTitle>
-              <CardDescription>
-                Current limit: ${user.dailyLimit.toLocaleString()}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleUpdateLimit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="dailyLimit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Daily Limit ($)</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Maximum allowed: $100,000
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="reason"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Reason for Change</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Explain why this limit is being changed" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={isUpdatingLimit}>
-                    {isUpdatingLimit ? "Updating..." : "Update Limit"}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-
-          {/* Account Status */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Account Status Control</CardTitle>
-              <CardDescription>
-                Current status: <UserStatus status={user.accountStatus} />
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Status Management</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Suspending an account will prevent the user from logging in or conducting any transactions.
-                  </p>
-                  {user.accountStatus === "active" ? (
-                    <Button variant="destructive" onClick={() => setShowSuspendDialog(true)}>
-                      <Ban className="h-4 w-4 mr-2" />
-                      Suspend Account
-                    </Button>
-                  ) : (
-                    <Button variant="outline" onClick={() => setShowActivateDialog(true)}>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Reactivate Account
-                    </Button>
-                  )}
-                </div>
+      {/* Action Dialogs */}
+      <Dialog open={isActionDialogOpen} onOpenChange={setIsActionDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {actionType === "suspend" && "Suspend User Account"}
+              {actionType === "reactivate" && "Reactivate User Account"}
+              {actionType === "limit" && "Update Daily Transaction Limit"}
+            </DialogTitle>
+            <DialogDescription>
+              {actionType === "suspend" && "This will prevent the user from accessing their account until reactivated."}
+              {actionType === "reactivate" && "This will restore the user's access to their account."}
+              {actionType === "limit" && "Update the maximum daily transaction amount for this user."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {(actionType === "suspend" || actionType === "reactivate") && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="reason">Reason</Label>
+                <Textarea
+                  id="reason"
+                  placeholder="Please provide a reason for this action..."
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                />
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Suspend Account Dialog */}
-      <AlertDialog open={showSuspendDialog} onOpenChange={setShowSuspendDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Suspend User Account</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to suspend {user.name}'s account? This will prevent them from accessing the platform or performing any transactions.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSuspendAccount} className="bg-destructive text-destructive-foreground">
-              Suspend Account
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Activate Account Dialog */}
-      <AlertDialog open={showActivateDialog} onOpenChange={setShowActivateDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Activate User Account</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to reactivate {user.name}'s account? This will restore their access to the platform and ability to perform transactions.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleActivateAccount}>
-              Activate Account
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </div>
+          )}
+          
+          {actionType === "limit" && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="dailyLimit">Daily Transaction Limit ($)</Label>
+                <Input
+                  id="dailyLimit"
+                  type="number"
+                  value={dailyLimit}
+                  onChange={(e) => setDailyLimit(e.target.value)}
+                />
+                <p className="text-sm text-muted-foreground">Current limit: ${user.dailyLimit.toLocaleString()}</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="limitReason">Reason for Change</Label>
+                <Textarea
+                  id="limitReason"
+                  placeholder="Please provide a reason for updating the limit..."
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsActionDialogOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={confirmAction} 
+              variant={actionType === "suspend" ? "destructive" : "default"}
+            >
+              {actionType === "suspend" && "Suspend Account"}
+              {actionType === "reactivate" && "Reactivate Account"}
+              {actionType === "limit" && "Update Limit"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
