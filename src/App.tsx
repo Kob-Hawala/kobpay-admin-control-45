@@ -14,6 +14,7 @@ import LoginPage from "./pages/admin/LoginPage";
 import OtpVerificationPage from "./pages/admin/OtpVerificationPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import UsersPage from "./pages/admin/UsersPage";
+import UserDetailPage from "./pages/admin/UserDetailPage";
 import KycPage from "./pages/admin/KycPage";
 import KobPayPage from "./pages/admin/KobPayPage";
 import EscrowPage from "./pages/admin/EscrowPage";
@@ -78,6 +79,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <UsersPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/users/:userId" 
+                    element={
+                      <ProtectedRoute>
+                        <UserDetailPage />
                       </ProtectedRoute>
                     } 
                   />
