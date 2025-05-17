@@ -31,6 +31,7 @@ import SettingsPage from "./pages/admin/SettingsPage";
 import P2PPage from "./pages/admin/P2PPage";
 import NotFound from "./pages/NotFound";
 
+
 // Create the query client
 const queryClient = new QueryClient();
 

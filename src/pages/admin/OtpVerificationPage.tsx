@@ -143,7 +143,7 @@ export default function OtpVerificationPage() {
         </div>
 
         {/* Right side (graphic) */}
-        <div className="hidden md:flex md:w-1/2 bg-gradient-to-r from-galaxy-blue to-galaxy-purple items-center justify-center">
+        {/* <div className="hidden md:flex md:w-1/2 bg-gradient-to-r from-galaxy-blue to-galaxy-purple items-center justify-center">
           <div className="max-w-md p-6 text-white">
             <h2 className="text-3xl font-bold mb-6">Two-Factor Authentication</h2>
             <p className="text-lg mb-8">
@@ -175,7 +175,7 @@ export default function OtpVerificationPage() {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

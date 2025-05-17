@@ -11,7 +11,7 @@ const Index = () => {
           <div className="mx-auto h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-2xl">
             K
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold">KOB Pay Admin Platform</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold">KOB Hawala Admin Panel</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Your comprehensive cryptocurrency management solution with KYC, transactions, 
             and platform control in one place.
