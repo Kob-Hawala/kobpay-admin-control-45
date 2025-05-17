@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   Card, 
@@ -202,35 +203,35 @@ const FeeControl = () => {
                   />
                 </div>
                 <div className="flex space-x-2">
-                  <Select value={assetFilter || ""} onValueChange={setAssetFilter}>
+                  <Select value={assetFilter || "none"} onValueChange={(value) => setAssetFilter(value === "none" ? null : value)}>
                     <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Asset" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All assets</SelectItem>
+                      <SelectItem value="none">All assets</SelectItem>
                       {uniqueAssets.map(asset => (
                         <SelectItem key={asset} value={asset}>{asset}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   
-                  <Select value={typeFilter || ""} onValueChange={setTypeFilter}>
+                  <Select value={typeFilter || "none"} onValueChange={(value) => setTypeFilter(value === "none" ? null : value)}>
                     <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Fee Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All types</SelectItem>
+                      <SelectItem value="none">All types</SelectItem>
                       <SelectItem value="flat">Flat</SelectItem>
                       <SelectItem value="percentage">Percentage</SelectItem>
                     </SelectContent>
                   </Select>
                   
-                  <Select value={statusFilter || ""} onValueChange={setStatusFilter}>
+                  <Select value={statusFilter || "none"} onValueChange={(value) => setStatusFilter(value === "none" ? null : value)}>
                     <SelectTrigger className="w-[130px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All status</SelectItem>
+                      <SelectItem value="none">All status</SelectItem>
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="inactive">Inactive</SelectItem>
                     </SelectContent>
