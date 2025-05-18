@@ -41,12 +41,6 @@ export function LineChart({ data }: LineChartProps) {
     
     const areaSeries = chart.addSeries({
       type: 'Area',
-      priceScaleId: 'right',
-      priceFormat: {
-        type: 'price',
-        precision: 2,
-        minMove: 0.01,
-      }
     });
     
     // Set the colors through the applyOptions method

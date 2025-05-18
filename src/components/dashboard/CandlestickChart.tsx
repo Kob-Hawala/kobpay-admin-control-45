@@ -41,13 +41,6 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const candleSeries = chart.addSeries({
       type: 'Candlestick',
-      // Use correct properties for Candlestick series
-      priceScaleId: 'right',
-      priceFormat: {
-        type: 'price',
-        precision: 6,
-        minMove: 0.000001,
-      }
     });
     
     // Set the colors through the applyOptions method
