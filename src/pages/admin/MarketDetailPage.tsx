@@ -1,231 +1,281 @@
 
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AdminLayout from "@/components/admin-layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft } from "lucide-react";
-import { useSingleCryptoData } from "@/hooks/use-crypto-data";
-import { fetchChartData, fetchTokenNews, ChartData } from "@/services/crypto-api";
-import { CandlestickChart } from "@/components/dashboard/CandlestickChart";
 import { LineChart } from "@/components/dashboard/LineChart";
+import { CandlestickChart } from "@/components/dashboard/CandlestickChart";
+import { mockCryptoData } from "@/data/mock-crypto-data";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, BarChart3, LineChart as LineChartIcon, Download, RefreshCw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function MarketDetailPage() {
   const { coinId } = useParams<{ coinId: string }>();
-  const symbol = coinId?.toUpperCase() || "BTC";
-  const { cryptoData, isLoading: isLoadingCrypto } = useSingleCryptoData(symbol);
+  const navigate = useNavigate();
+  const [chartType, setChartType] = useState<'line' | 'candlestick'>('line');
+  const [timeframe, setTimeframe] = useState<'1d' | '1w' | '1m' | '3m' | '1y'>('1d');
   
-  const [chartData, setChartData] = useState<ChartData[]>([]);
-  const [newsItems, setNewsItems] = useState<any[]>([]);
-  const [isLoadingChart, setIsLoadingChart] = useState(true);
-  const [isLoadingNews, setIsLoadingNews] = useState(true);
-  const [chartType, setChartType] = useState<"line" | "candlestick">("line");
-  const [timeframe, setTimeframe] = useState<"1h" | "1d" | "1w" | "1m" | "3m" | "1y">("1d");
-  const [activeTab, setActiveTab] = useState<"chart" | "news">("chart");
-
-  // Fetch chart data when timeframe changes
-  useEffect(() => {
-    const loadChartData = async () => {
-      try {
-        setIsLoadingChart(true);
-        const data = await fetchChartData(symbol, timeframe);
-        setChartData(data);
-      } catch (err) {
-        console.error("Error fetching chart data:", err);
-      } finally {
-        setIsLoadingChart(false);
-      }
-    };
-    
-    loadChartData();
-  }, [symbol, timeframe]);
-
-  // Fetch news data
-  useEffect(() => {
-    const loadNewsData = async () => {
-      try {
-        setIsLoadingNews(true);
-        const news = await fetchTokenNews(symbol);
-        setNewsItems(news);
-      } catch (err) {
-        console.error("Error fetching news:", err);
-      } finally {
-        setIsLoadingNews(false);
-      }
-    };
-    
-    if (activeTab === "news") {
-      loadNewsData();
-    }
-  }, [symbol, activeTab]);
-
-  if (isLoadingCrypto) {
+  // In a real app, this would fetch data based on the coinId
+  const coinData = mockCryptoData.find(coin => coin.id.toLowerCase() === coinId?.toLowerCase());
+  
+  if (!coinData) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <p className="text-lg">Loading market data...</p>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
+          <h2 className="text-2xl font-bold mb-2">Market Not Found</h2>
+          <p className="text-muted-foreground mb-4">The market data for {coinId} could not be found.</p>
+          <Button variant="outline" onClick={() => navigate('/admin/dashboard')}>
+            Return to Dashboard
+          </Button>
         </div>
       </AdminLayout>
     );
   }
-
-  if (!cryptoData) {
-    return (
-      <AdminLayout>
-        <div className="space-y-4">
-          <Link to="/admin/dashboard">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </Link>
-          <div className="flex flex-col items-center justify-center h-[calc(100vh-250px)]">
-            <p className="text-lg font-medium">Cryptocurrency not found</p>
-            <p className="text-muted-foreground">The requested cryptocurrency information is not available.</p>
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
-
+  
   return (
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center">
-          <Link to="/admin/dashboard">
-            <Button variant="outline" size="sm" className="dark:bg-background dark:text-foreground">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </Link>
-          <div className="ml-4">
-            <h1 className="text-2xl font-bold">{cryptoData.name} ({cryptoData.symbol})</h1>
-            <div className="flex items-center">
-              <p className="text-xl">{cryptoData.price}</p>
-              <span className={`ml-2 ${cryptoData.change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                {cryptoData.change >= 0 ? '+' : ''}{cryptoData.change.toFixed(2)}%
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="mr-2"
+            onClick={() => navigate('/admin/dashboard')}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight flex items-center">
+              <img 
+                src={coinData.iconUrl} 
+                alt={coinData.name} 
+                className="h-8 w-8 mr-2" 
+              />
+              {coinData.name} ({coinData.symbol})
+            </h1>
+            <p className="text-muted-foreground">
+              Current Price: ${coinData.price.toLocaleString()} • 24h Change: 
+              <span className={coinData.change24h >= 0 ? "text-green-500" : "text-red-500"}>
+                {coinData.change24h >= 0 ? " +" : " "}
+                {coinData.change24h.toFixed(2)}%
               </span>
-            </div>
+            </p>
           </div>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Market Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div>
-                <h3 className="text-sm text-muted-foreground">Market Cap</h3>
-                <p className="text-lg font-medium">{cryptoData.market_cap}</p>
-              </div>
-              <div>
-                <h3 className="text-sm text-muted-foreground">24h Trading Volume</h3>
-                <p className="text-lg font-medium">{cryptoData.volume}</p>
-              </div>
-              <div>
-                <h3 className="text-sm text-muted-foreground">Current Price</h3>
-                <p className="text-lg font-medium">{cryptoData.price}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="pb-0">
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "chart" | "news")}>
-              <TabsList className="grid w-full max-w-[400px] grid-cols-2">
-                <TabsTrigger value="chart">Price Chart</TabsTrigger>
-                <TabsTrigger value="news">Latest News</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </CardHeader>
-          <CardContent>
-            <TabsContent value="chart" className="space-y-4 pt-4">
-              <div className="flex items-center justify-between mb-4">
+        
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Market Overview</TabsTrigger>
+            <TabsTrigger value="trades">Recent Trades</TabsTrigger>
+            <TabsTrigger value="orderbook">Order Book</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle>Price Chart</CardTitle>
+                  <CardDescription>
+                    {coinData.name} price chart in USD
+                  </CardDescription>
+                </div>
                 <div className="flex space-x-2">
-                  <Button 
-                    variant={chartType === "line" ? "default" : "outline"} 
-                    size="sm"
-                    onClick={() => setChartType("line")}
-                    className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
-                  >
-                    Line
-                  </Button>
-                  <Button 
-                    variant={chartType === "candlestick" ? "default" : "outline"} 
-                    size="sm"
-                    onClick={() => setChartType("candlestick")}
-                    className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
-                  >
-                    Candlestick
-                  </Button>
-                </div>
-                <div className="flex space-x-1">
-                  {[
-                    { key: "1h", label: "1H" },
-                    { key: "1d", label: "1D" },
-                    { key: "1w", label: "1W" },
-                    { key: "1m", label: "1M" },
-                    { key: "3m", label: "3M" },
-                    { key: "1y", label: "1Y" }
-                  ].map((period) => (
+                  <div className="flex space-x-1 border rounded-md overflow-hidden">
                     <Button 
-                      key={period.key} 
-                      variant={timeframe === period.key ? "default" : "outline"} 
+                      variant={chartType === 'line' ? 'default' : 'ghost'} 
                       size="sm"
-                      onClick={() => setTimeframe(period.key as any)}
-                      className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
+                      onClick={() => setChartType('line')}
+                      className="rounded-none"
                     >
-                      {period.label}
+                      <LineChartIcon className="h-4 w-4" />
                     </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="h-96 w-full">
-                {isLoadingChart ? (
-                  <div className="flex items-center justify-center h-full">
-                    <p>Loading chart data...</p>
+                    <Button 
+                      variant={chartType === 'candlestick' ? 'default' : 'ghost'} 
+                      size="sm"
+                      onClick={() => setChartType('candlestick')}
+                      className="rounded-none"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                    </Button>
                   </div>
-                ) : chartType === "candlestick" ? (
-                  <CandlestickChart data={chartData} />
+                  
+                  <Button size="sm" variant="outline">
+                    <Download className="h-4 w-4 mr-1" />
+                    Export
+                  </Button>
+                  
+                  <Button size="sm">
+                    <RefreshCw className="h-4 w-4 mr-1" />
+                    Refresh
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex space-x-2 mb-4">
+                  <Button 
+                    variant={timeframe === '1d' ? 'secondary' : 'outline'} 
+                    size="sm"
+                    onClick={() => setTimeframe('1d')}
+                  >
+                    1D
+                  </Button>
+                  <Button 
+                    variant={timeframe === '1w' ? 'secondary' : 'outline'} 
+                    size="sm"
+                    onClick={() => setTimeframe('1w')}
+                  >
+                    1W
+                  </Button>
+                  <Button 
+                    variant={timeframe === '1m' ? 'secondary' : 'outline'} 
+                    size="sm"
+                    onClick={() => setTimeframe('1m')}
+                  >
+                    1M
+                  </Button>
+                  <Button 
+                    variant={timeframe === '3m' ? 'secondary' : 'outline'} 
+                    size="sm"
+                    onClick={() => setTimeframe('3m')}
+                  >
+                    3M
+                  </Button>
+                  <Button 
+                    variant={timeframe === '1y' ? 'secondary' : 'outline'} 
+                    size="sm"
+                    onClick={() => setTimeframe('1y')}
+                  >
+                    1Y
+                  </Button>
+                </div>
+                
+                {chartType === 'line' ? (
+                  <LineChart data={coinData.chartData || []} />
                 ) : (
-                  <LineChart data={chartData} />
+                  <CandlestickChart data={coinData.chartData || []} />
                 )}
-              </div>
-            </TabsContent>
+              </CardContent>
+            </Card>
             
-            <TabsContent value="news" className="pt-4">
-              {isLoadingNews ? (
-                <div className="flex items-center justify-center h-40">
-                  <p>Loading news articles...</p>
-                </div>
-              ) : newsItems.length > 0 ? (
-                <div className="space-y-4">
-                  {newsItems.map((item, i) => (
-                    <div key={i} className="p-4 rounded-lg hover:bg-muted/30 transition-colors border dark:border-gray-800">
-                      <h4 className="font-medium">{item.title}</h4>
-                      {item.summary && (
-                        <p className="text-sm text-muted-foreground mt-1">{item.summary}</p>
-                      )}
-                      <div className="flex items-center text-xs text-muted-foreground mt-2">
-                        <span>{item.source}</span>
-                        <span className="mx-2">•</span>
-                        <span>{item.time}</span>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Market Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Stats</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Market Cap</p>
+                      <p className="font-medium">${coinData.marketCap.toLocaleString()}</p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">No news articles found for {cryptoData.name}</p>
-                </div>
-              )}
-            </TabsContent>
-          </CardContent>
-        </Card>
+                    <div>
+                      <p className="text-sm text-muted-foreground">24h Volume</p>
+                      <p className="font-medium">${coinData.volume24h.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">All Time High</p>
+                      <p className="font-medium">${coinData.allTimeHigh.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Circulating Supply</p>
+                      <p className="font-medium">{coinData.circulatingSupply.toLocaleString()} {coinData.symbol}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Exchange Info */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Exchange Info</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Trading Pairs</p>
+                      <p className="font-medium">25</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Base Fee</p>
+                      <p className="font-medium">0.1%</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Min Order</p>
+                      <p className="font-medium">0.001 {coinData.symbol}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Status</p>
+                      <p className="font-medium text-green-500">Active</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Price Alerts */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Price Alerts</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm">Set up custom price alerts for significant changes in {coinData.symbol} price.</p>
+                  <Button className="w-full">Configure Alerts</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="trades" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Trades</CardTitle>
+                <CardDescription>
+                  Latest transactions for {coinData.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Trade data will appear here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="orderbook" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Order Book</CardTitle>
+                <CardDescription>
+                  Current buy and sell orders for {coinData.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Order book data will appear here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="analytics" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Market Analytics</CardTitle>
+                <CardDescription>
+                  Detailed analytics for {coinData.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Market analytics will appear here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </AdminLayout>
   );
