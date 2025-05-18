@@ -39,8 +39,8 @@ export function LineChart({ data }: LineChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    // Use the standard addSeries method with 'area' type
-    const areaSeries = chart.addSeries('area', {
+    // Create an area series with the correct API
+    const areaSeries = chart.addAreaSeries({
       lineColor: isDarkMode ? '#7e57c2' : '#6366f1',
       topColor: isDarkMode ? 'rgba(126, 87, 194, 0.4)' : 'rgba(99, 102, 241, 0.4)',
       bottomColor: isDarkMode ? 'rgba(126, 87, 194, 0.1)' : 'rgba(99, 102, 241, 0.1)',
