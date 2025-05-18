@@ -21,8 +21,14 @@ export interface CryptoData {
   chartData: ChartData[];
 }
 
-// List of supported tokens
-export const SUPPORTED_TOKENS = ["BTC", "ETH", "SOL", "XRP", "BNB", "USDT", "TRX", "DOT", "ADA", "LTC"];
+// List of supported tokens - updated to include all 20 tokens
+export const SUPPORTED_TOKENS = [
+  "BTC", "ETH", "SOL", "XRP", "BNB", 
+  "USDT", "TRX", "DOT", "ADA", "LTC", 
+  "DOGE", "SHIB", "LINK", "XLM", "APT", 
+  "TON", "ICP", "NEAR", "FIL", "HBAR",
+  "MATIC", "AVAX", "ATOM", "ARB"
+];
 
 // This is a placeholder for a real API service that would fetch data from a real API
 export const fetchCryptoData = async (id: string): Promise<CryptoData> => {

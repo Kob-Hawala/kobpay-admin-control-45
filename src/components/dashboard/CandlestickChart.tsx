@@ -41,11 +41,22 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const candleSeries = chart.addSeries({
       type: 'Candlestick',
-      upColor: '#10b981', // green for up
-      downColor: '#ef4444', // red for down
-      borderVisible: false,
+      // Use correct properties for Candlestick series
+      priceScaleId: 'right',
+      priceFormat: {
+        type: 'price',
+        precision: 6,
+        minMove: 0.000001,
+      }
+    });
+    
+    // Set the colors through the applyOptions method
+    candleSeries.applyOptions({
       wickUpColor: '#10b981',
-      wickDownColor: '#ef4444'
+      wickDownColor: '#ef4444',
+      upColor: '#10b981',
+      downColor: '#ef4444',
+      borderVisible: false,
     });
     
     // Format data for candlestick chart
