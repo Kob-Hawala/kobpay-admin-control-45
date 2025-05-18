@@ -32,8 +32,8 @@ import NotificationsPage from "./pages/admin/NotificationsPage";
 import MessagingPage from "./pages/admin/MessagingPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import P2PPage from "./pages/admin/P2PPage";
+import MarketDetailPage from "./pages/admin/MarketDetailPage";
 import NotFound from "./pages/NotFound";
-
 
 // Create the query client
 const queryClient = new QueryClient();
@@ -44,7 +44,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="system">
           <TooltipProvider>
-            <Toaster />
+            {/* Only include one toaster to prevent duplicate toasts */}
             <Sonner />
             <BrowserRouter>
               <AuthProvider>
@@ -220,6 +220,15 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <SettingsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  {/* New Market Detail Route */}
+                  <Route 
+                    path="/admin/markets/:coinId" 
+                    element={
+                      <ProtectedRoute>
+                        <MarketDetailPage />
                       </ProtectedRoute>
                     } 
                   />

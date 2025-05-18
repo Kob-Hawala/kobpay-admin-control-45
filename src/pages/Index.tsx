@@ -8,10 +8,10 @@ const Index = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <div className="max-w-3xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <div className="mx-auto h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-2xl">
-            K
+          <div className="mx-auto h-24 w-24 rounded-full bg-primary/5 flex items-center justify-center overflow-hidden">
+            <img src="/lovable-uploads/acfcd39f-8a64-41f7-b3a8-7922be3d9a94.png" alt="KOB Trust Logo" className="h-full w-full object-contain" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold">KOB Hawala Admin Panel</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold">KOB TRUST Admin Panel</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Your comprehensive cryptocurrency management solution with KYC, transactions, 
             and platform control in one place.

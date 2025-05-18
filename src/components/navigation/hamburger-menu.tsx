@@ -35,23 +35,23 @@ export function HamburgerMenu() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="md:hidden">
-          <Menu className="h-5 w-5" />
+          <Menu className="h-5 w-5 text-foreground dark:text-gray-100" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <div className="flex h-16 items-center border-b px-4">
+        <div className="flex h-16 items-center justify-between border-b px-4">
           <div className="flex items-center gap-2">
-            <Shield className="h-6 w-6" />
+            <img src="/lovable-uploads/acfcd39f-8a64-41f7-b3a8-7922be3d9a94.png" alt="KOB Trust Logo" className="h-10" />
             <h2 className="text-lg font-semibold">KOB HAWALA</h2>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-4 top-4 rounded-sm opacity-70"
+            className="rounded-sm opacity-70 hover:opacity-100"
             onClick={() => setOpen(false)}
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-foreground dark:text-gray-100" />
             <span className="sr-only">Close</span>
           </Button>
         </div>
@@ -62,10 +62,12 @@ export function HamburgerMenu() {
                 <Button
                   key={item.label}
                   variant="ghost"
-                  className="justify-start gap-2"
+                  className="justify-start gap-2 text-foreground dark:text-gray-100 hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleNavigate(item.href)}
                 >
-                  {item.icon}
+                  {React.cloneElement(item.icon as React.ReactElement, {
+                    className: "h-5 w-5 text-muted-foreground dark:text-gray-300 group-hover:text-primary"
+                  })}
                   {item.label}
                 </Button>
               ))}
@@ -75,7 +77,7 @@ export function HamburgerMenu() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="rounded-full bg-primary/10 p-1">
-                    <User className="h-4 w-4" />
+                    <User className="h-4 w-4 text-foreground dark:text-gray-100" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Admin User</p>
@@ -88,7 +90,7 @@ export function HamburgerMenu() {
                   className="rounded-full"
                   onClick={() => console.log("Logout")}
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 text-foreground dark:text-gray-100" />
                 </Button>
               </div>
             </div>

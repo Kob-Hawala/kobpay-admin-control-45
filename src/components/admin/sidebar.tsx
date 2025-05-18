@@ -48,12 +48,12 @@ export function Sidebar({ isSidebarOpen }: SidebarProps) {
         {/* Logo */}
         <div className={`px-4 py-6 flex items-center ${!isSidebarOpen && !isMobile ? "justify-center" : ""}`}>
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-              K
+            <div className="h-8 w-8 rounded-full flex items-center justify-center overflow-hidden">
+              <img src="/lovable-uploads/acfcd39f-8a64-41f7-b3a8-7922be3d9a94.png" alt="KOB Trust Logo" className="w-full h-full object-cover" />
             </div>
             {(isSidebarOpen || isMobile) && (
               <span className="text-xl font-bold text-sidebar-foreground">
-                KOB HAWALA
+                KOB TRUST
               </span>
             )}
           </Link>
@@ -89,7 +89,7 @@ export function Sidebar({ isSidebarOpen }: SidebarProps) {
                   <Settings className="h-4 w-4 text-sidebar-foreground dark:text-gray-100" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
