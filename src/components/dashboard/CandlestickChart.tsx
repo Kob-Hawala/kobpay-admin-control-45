@@ -41,12 +41,12 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const candleSeries = chart.addSeries({
       type: 'Candlestick',
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderUpColor: '#10b981',
-      borderDownColor: '#ef4444',
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
+      priceFormat: {
+        type: 'price',
+        precision: 2,
+      },
+      color: '#10b981', // green for up
+      baseLineColor: '#ef4444', // red for down
     });
     
     // Format data for candlestick chart

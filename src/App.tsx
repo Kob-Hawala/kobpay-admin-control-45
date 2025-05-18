@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ThemeProvider } from "@/providers/theme-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 import ProtectedRoute from './components/protected-route';
 
 import Index from './pages/Index';
@@ -39,39 +40,41 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/admin/login" element={<LoginPage />} />
-            <Route path="/admin/otp" element={<OtpVerificationPage />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" /></ProtectedRoute>} />
-            <Route path="/admin/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-            <Route path="/admin/markets/:coinId" element={<ProtectedRoute><MarketDetailPage /></ProtectedRoute>} />
-            <Route path="/admin/kyc" element={<ProtectedRoute><KycPage /></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
-            <Route path="/admin/users/:userId" element={<ProtectedRoute><UserDetailPage /></ProtectedRoute>} />
-            <Route path="/admin/p2p" element={<ProtectedRoute><P2PPage /></ProtectedRoute>} />
-            <Route path="/admin/escrow" element={<ProtectedRoute><EscrowPage /></ProtectedRoute>} />
-            <Route path="/admin/fiat-deposits" element={<ProtectedRoute><FiatDepositsPage /></ProtectedRoute>} />
-            <Route path="/admin/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
-            <Route path="/admin/exchange-rates" element={<ProtectedRoute><ExchangeRatesPage /></ProtectedRoute>} />
-            <Route path="/admin/staking" element={<ProtectedRoute><StakingPage /></ProtectedRoute>} />
-            <Route path="/admin/liquidity" element={<ProtectedRoute><LiquidityPage /></ProtectedRoute>} />
-            <Route path="/admin/fees" element={<ProtectedRoute><FeesPage /></ProtectedRoute>} />
-            <Route path="/admin/kob-pay" element={<ProtectedRoute><KobPayPage /></ProtectedRoute>} />
-            <Route path="/admin/messaging" element={<ProtectedRoute><MessagingPage /></ProtectedRoute>} />
-            <Route path="/admin/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-            <Route path="/admin/logs" element={<ProtectedRoute><LogsPage /></ProtectedRoute>} />
-            <Route path="/admin/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-            <Route path="/admin/api-settings" element={<ProtectedRoute><ApiSettingsPage /></ProtectedRoute>} />
-            <Route path="/admin/news-settings" element={<ProtectedRoute><NewsSettingsPage /></ProtectedRoute>} />
-            
-            {/* Not Found */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/admin/login" element={<LoginPage />} />
+              <Route path="/admin/otp" element={<OtpVerificationPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<ProtectedRoute><Navigate to="/admin/dashboard" /></ProtectedRoute>} />
+              <Route path="/admin/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+              <Route path="/admin/markets/:coinId" element={<ProtectedRoute><MarketDetailPage /></ProtectedRoute>} />
+              <Route path="/admin/kyc" element={<ProtectedRoute><KycPage /></ProtectedRoute>} />
+              <Route path="/admin/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
+              <Route path="/admin/users/:userId" element={<ProtectedRoute><UserDetailPage /></ProtectedRoute>} />
+              <Route path="/admin/p2p" element={<ProtectedRoute><P2PPage /></ProtectedRoute>} />
+              <Route path="/admin/escrow" element={<ProtectedRoute><EscrowPage /></ProtectedRoute>} />
+              <Route path="/admin/fiat-deposits" element={<ProtectedRoute><FiatDepositsPage /></ProtectedRoute>} />
+              <Route path="/admin/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
+              <Route path="/admin/exchange-rates" element={<ProtectedRoute><ExchangeRatesPage /></ProtectedRoute>} />
+              <Route path="/admin/staking" element={<ProtectedRoute><StakingPage /></ProtectedRoute>} />
+              <Route path="/admin/liquidity" element={<ProtectedRoute><LiquidityPage /></ProtectedRoute>} />
+              <Route path="/admin/fees" element={<ProtectedRoute><FeesPage /></ProtectedRoute>} />
+              <Route path="/admin/kob-pay" element={<ProtectedRoute><KobPayPage /></ProtectedRoute>} />
+              <Route path="/admin/messaging" element={<ProtectedRoute><MessagingPage /></ProtectedRoute>} />
+              <Route path="/admin/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+              <Route path="/admin/logs" element={<ProtectedRoute><LogsPage /></ProtectedRoute>} />
+              <Route path="/admin/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/admin/api-settings" element={<ProtectedRoute><ApiSettingsPage /></ProtectedRoute>} />
+              <Route path="/admin/news-settings" element={<ProtectedRoute><NewsSettingsPage /></ProtectedRoute>} />
+              
+              {/* Not Found */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
 
-          <Toaster />
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
