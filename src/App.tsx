@@ -1,14 +1,15 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { Toaster } from "sonner";
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ThemeProvider } from "@/providers/theme-provider";
-import { ProtectedRoute } from './components/protected-route';
+import ProtectedRoute from './components/protected-route';
 
 import Index from './pages/Index';
-import LoginPage from './pages/LoginPage';
-import OtpVerificationPage from './pages/OtpVerificationPage';
+import LoginPage from './pages/admin/LoginPage';
+import OtpVerificationPage from './pages/admin/OtpVerificationPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import KycPage from './pages/admin/KycPage';
 import UsersPage from './pages/admin/UsersPage';

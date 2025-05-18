@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ChartData } from '@/services/crypto-api';
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart } from 'lightweight-charts';
 import { useTheme } from "@/providers/theme-provider";
 
 interface LineChartProps {

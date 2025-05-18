@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
+import { Sidebar } from "@/components/admin/sidebar";
+import { Header } from "@/components/admin/header";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -11,7 +12,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex h-screen bg-background text-foreground">
-      <Sidebar className="hidden md:flex" />
+      <Sidebar isSidebarOpen={isSidebarOpen} />
       
       <div className="flex flex-col flex-1 overflow-y-auto">
         <Header />
@@ -21,7 +22,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </main>
       </div>
 
-      <style global jsx>{`
+      <style jsx>
+        {`
         /* Ensure dark mode support for form elements */
         .dark input,
         .dark textarea,
@@ -43,7 +45,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         .dark [data-collapsed] button:hover svg {
           color: hsl(var(--primary));
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
