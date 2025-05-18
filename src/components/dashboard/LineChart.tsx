@@ -39,8 +39,7 @@ export function LineChart({ data }: LineChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    const areaSeries = chart.addSeries({
-      type: 'Area',
+    const areaSeries = chart.addAreaSeries({
       lineColor: isDarkMode ? '#7e57c2' : '#6366f1',
       topColor: isDarkMode ? 'rgba(126, 87, 194, 0.4)' : 'rgba(99, 102, 241, 0.4)',
       bottomColor: isDarkMode ? 'rgba(126, 87, 194, 0.0)' : 'rgba(99, 102, 241, 0.0)',
@@ -49,7 +48,7 @@ export function LineChart({ data }: LineChartProps) {
     
     // Format data for line chart
     const formattedData = data.map(item => ({
-      time: item.time / 1000, // Convert from milliseconds
+      time: new Date(item.time).toISOString().split('T')[0],
       value: item.close,
     }));
     
