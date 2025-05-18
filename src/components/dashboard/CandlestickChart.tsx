@@ -39,8 +39,8 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    // Create a candlestick series with correct API
-    const candleSeries = chart.addCandlestickSeries({
+    // Use the standard addSeries method with 'candlestick' type
+    const candleSeries = chart.addSeries('candlestick', {
       wickUpColor: '#10b981',
       wickDownColor: '#ef4444',
       upColor: '#10b981',
