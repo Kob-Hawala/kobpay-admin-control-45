@@ -39,9 +39,8 @@ export function LineChart({ data }: LineChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    const areaSeries = chart.addSeries({
-      type: 'Area',
-    });
+    // Use the correct method for creating an area series
+    const areaSeries = chart.addAreaSeries();
     
     // Set the colors through the applyOptions method
     areaSeries.applyOptions({

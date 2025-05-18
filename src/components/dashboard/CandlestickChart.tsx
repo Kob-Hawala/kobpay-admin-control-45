@@ -39,9 +39,8 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    const candleSeries = chart.addSeries({
-      type: 'Candlestick',
-    });
+    // Use the correct method for creating a candlestick series
+    const candleSeries = chart.addCandlestickSeries();
     
     // Set the colors through the applyOptions method
     candleSeries.applyOptions({
