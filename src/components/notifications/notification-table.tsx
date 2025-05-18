@@ -1,15 +1,26 @@
+
 import React, { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+import { format } from "date-fns";
+import { Bell, Check, Filter, MailOpen, Search } from "lucide-react";
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Pagination,
   PaginationContent,
@@ -18,9 +29,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Check, Bell, ShieldAlert, CircleDollarSign, Lock, Filter, Info } from "lucide-react";
-import { format } from "date-fns";
+import { mockNotifications } from "@/components/notifications/mock-notifications";
 
+// Define the types
 export type NotificationType = "security" | "escrow" | "deposit" | "system" | "kyc";
 
 export interface Notification {
@@ -33,36 +44,23 @@ export interface Notification {
   priority: "high" | "medium" | "low";
 }
 
-interface NotificationTableProps {
-  notifications: Notification[];
-  filterType: string;
-  filterStatus: string;
-  searchTerm: string;
-  onMarkAsRead: (id: string) => void;
-}
-
-export default function NotificationTable({
-  notifications,
-  filterType,
-  filterStatus,
-  searchTerm,
-  onMarkAsRead,
-}: NotificationTableProps) {
+export default function NotificationTable() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
 
-  // Filter notifications based on search term, type, and status
-  const filteredNotifications = notifications.filter((notification) => {
-    const matchesSearch =
+  // Filter notifications
+  const filteredNotifications = mockNotifications.filter((notification) => {
+    const matchesSearch = 
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notification.message.toLowerCase().includes(searchTerm.toLowerCase());
-
+      
     const matchesType = filterType === "all" || notification.type === filterType;
-    const matchesStatus =
-      filterStatus === "all" ||
-      (filterStatus === "read" && notification.read) ||
-      (filterStatus === "unread" && !notification.read);
-
+    const matchesStatus = filterStatus === "all" || 
+      (filterStatus === "read" ? notification.read : !notification.read);
+      
     return matchesSearch && matchesType && matchesStatus;
   });
 
@@ -72,68 +70,142 @@ export default function NotificationTable({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  
+  // Mark all as read
+  const markAllAsRead = () => {
+    // In a real app this would update the database
+    console.log("Marking all filtered notifications as read");
+    // Toast notification would go here
+  };
+  
+  // Mark single notification as read
+  const markAsRead = (id: string) => {
+    // In a real app this would update the database
+    console.log("Marking notification as read:", id);
+    // Toast notification would go here
+  };
 
-  const getNotificationIcon = (type: NotificationType) => {
+  // Get badge variant based on priority
+  const getPriorityVariant = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "outline";
+      default:
+        return "secondary";
+    }
+  };
+
+  // Get icon for notification type
+  const getTypeIcon = (type: NotificationType) => {
     switch (type) {
       case "security":
-        return <ShieldAlert className="h-5 w-5 text-destructive" />;
+        return <Bell className="h-4 w-4" />;
       case "escrow":
-        return <Lock className="h-5 w-5 text-primary" />;
-      case "deposit":
-        return <CircleDollarSign className="h-5 w-5 text-green-600" />;
-      case "system":
-        return <Info className="h-5 w-5 text-blue-600" />;
-      case "kyc":
-        return <Filter className="h-5 w-5 text-amber-600" />;
+        return <Check className="h-4 w-4" />;
       default:
-        return <Bell className="h-5 w-5" />;
+        return <Bell className="h-4 w-4" />;
     }
   };
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search notifications..."
+            className="pl-8"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="security">Security</SelectItem>
+              <SelectItem value="escrow">Escrow</SelectItem>
+              <SelectItem value="deposit">Deposit</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+              <SelectItem value="kyc">KYC</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="read">Read</SelectItem>
+              <SelectItem value="unread">Unread</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button variant="outline" onClick={markAllAsRead}>
+            <MailOpen className="mr-2 h-4 w-4" />
+            Mark All as Read
+          </Button>
+        </div>
+      </div>
+
       <div className="rounded-md border">
         <Table>
-          <TableCaption>
-            {filteredNotifications.length === 0
-              ? "No notifications found"
-              : `Showing ${paginatedNotifications.length} of ${filteredNotifications.length} notifications`}
-          </TableCaption>
+          <TableCaption>System notifications and alerts</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Status</TableHead>
-              <TableHead className="w-[150px]">Type</TableHead>
-              <TableHead>Message</TableHead>
-              <TableHead className="w-[200px]">Date/Time</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[180px]">Date & Time</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead className="hidden md:table-cell">Message</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedNotifications.map((notification) => (
-              <TableRow key={notification.id} className={!notification.read ? "bg-muted/30" : ""}>
+              <TableRow key={notification.id} className={notification.read ? "" : "bg-muted/30"}>
                 <TableCell>
-                  <Badge variant={notification.read ? "outline" : "default"}>
-                    {notification.read ? "Read" : "Unread"}
-                  </Badge>
+                  {format(notification.timestamp, "MMM d, yyyy HH:mm")}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {getNotificationIcon(notification.type)}
-                    <span className="capitalize">{notification.type}</span>
+                    {getTypeIcon(notification.type)}
+                    {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div>
-                    <p className="font-medium">{notification.title}</p>
-                    <p className="text-muted-foreground text-sm">{notification.message}</p>
-                  </div>
+                <TableCell className="font-medium">{notification.title}</TableCell>
+                <TableCell className="hidden md:table-cell max-w-[300px] truncate">
+                  {notification.message}
                 </TableCell>
-                <TableCell>{format(notification.timestamp, "PPp")}</TableCell>
                 <TableCell>
+                  <Badge variant={getPriorityVariant(notification.priority)}>
+                    {notification.priority.toUpperCase()}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={notification.read ? "outline" : "secondary"}>
+                    {notification.read ? "Read" : "Unread"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
                   {!notification.read && (
-                    <Button variant="ghost" size="sm" onClick={() => onMarkAsRead(notification.id)}>
-                      <Check className="h-4 w-4 mr-1" />
-                      <span>Mark read</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => markAsRead(notification.id)}
+                    >
+                      Mark as Read
                     </Button>
                   )}
                 </TableCell>
@@ -143,50 +215,48 @@ export default function NotificationTable({
         </Table>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              />
-            </PaginationItem>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(
-                (page) =>
-                  page === 1 ||
-                  page === totalPages ||
-                  (page >= currentPage - 1 && page <= currentPage + 1)
-              )
-              .map((page, index, array) => (
-                <React.Fragment key={page}>
-                  {index > 0 && array[index - 1] !== page - 1 && (
-                    <PaginationItem>
-                      <div className="flex h-9 w-9 items-center justify-center">...</div>
-                    </PaginationItem>
-                  )}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(
+              (page) =>
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+            )
+            .map((page, index, array) => (
+              <React.Fragment key={page}>
+                {index > 0 && array[index - 1] !== page - 1 && (
                   <PaginationItem>
-                    <PaginationLink
-                      isActive={page === currentPage}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </PaginationLink>
+                    <div className="flex h-9 w-9 items-center justify-center">...</div>
                   </PaginationItem>
-                </React.Fragment>
-              ))}
+                )}
+                <PaginationItem>
+                  <PaginationLink
+                    isActive={page === currentPage}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              </React.Fragment>
+            ))}
 
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || totalPages === 0}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }

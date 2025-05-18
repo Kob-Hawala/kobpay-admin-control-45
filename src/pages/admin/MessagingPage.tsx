@@ -1,14 +1,15 @@
+
 import { useState } from "react";
 import AdminLayout from "@/components/admin-layout";
 import ChatThreadList from "@/components/messaging/chat-thread-list";
 import ChatViewer from "@/components/messaging/chat-viewer";
-import { mockChatThreads, ChatThread } from "@/components/messaging/mock-messaging-data";
+import { mockChatThreads } from "@/components/messaging/mock-messaging-data";
 
 export default function MessagingPage() {
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
 
   // Find the selected thread
-  const selectedThread: ChatThread | null = selectedThreadId
+  const selectedThread = selectedThreadId
     ? mockChatThreads.find((thread) => thread.id === selectedThreadId) || null
     : null;
 

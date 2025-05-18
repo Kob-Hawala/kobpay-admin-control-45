@@ -1,4 +1,5 @@
-import React, { useState } from "react"; // Added React import
+
+import React, { useState } from "react"; // Fix React import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,7 +29,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Search, Download, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { mockActivityLogs } from "@/data/mock-logs-data"; // Updated import
+import { mockActivityLogs } from "@/data/mock-logs-data"; // Fixed import name
 
 export default function ActivityLogsViewer() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,100 +1,51 @@
-import { useState } from "react";
+
+import React from "react";
 import AdminLayout from "@/components/admin-layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Check, Search } from "lucide-react";
-import NotificationTable, { Notification, NotificationType } from "@/components/notifications/notification-table";
-import { mockNotifications } from "@/components/notifications/mock-notifications";
+import NotificationTable from "@/components/notifications/notification-table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function NotificationsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState<NotificationType | "all">("all");
-  const [filterStatus, setFilterStatus] = useState<"all" | "read" | "unread">("all");
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
-
-  const markAsRead = (id: string) => {
-    setNotifications((prev: Notification[]) =>
-      prev.map((notification) =>
-        notification.id === id ? { ...notification, read: true } : notification
-      )
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev: Notification[]) =>
-      prev.map((notification) => ({ ...notification, read: true }))
-    );
-  };
-
   return (
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Notifications</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
           <p className="text-muted-foreground">
-            View and manage system notifications and alerts
+            Central hub for reviewing and managing system alerts and notifications
           </p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-          <div className="relative w-full md:w-auto">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search notifications..."
-              className="pl-8 w-full md:w-[300px]"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-            <Select value={filterType} onValueChange={(value) => setFilterType(value as NotificationType | "all")}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="security">Security</SelectItem>
-                <SelectItem value="escrow">Escrow</SelectItem>
-                <SelectItem value="deposit">Deposit</SelectItem>
-                <SelectItem value="system">System</SelectItem>
-                <SelectItem value="kyc">KYC</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as "all" | "read" | "unread")}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="read">Read</SelectItem>
-                <SelectItem value="unread">Unread</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button variant="outline" onClick={markAllAsRead} className="whitespace-nowrap">
-              <Check className="mr-2 h-4 w-4" />
-              Mark all as read
-            </Button>
-          </div>
-        </div>
-
-        <NotificationTable
-          notifications={notifications}
-          filterType={filterType}
-          filterStatus={filterStatus}
-          searchTerm={searchTerm}
-          onMarkAsRead={markAsRead}
-        />
+        
+        <Tabs defaultValue="all" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="all">All Notifications</TabsTrigger>
+            <TabsTrigger value="security">Security Alerts</TabsTrigger>
+            <TabsTrigger value="system">System Updates</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all" className="space-y-4">
+            <NotificationTable />
+          </TabsContent>
+          
+          <TabsContent value="security" className="space-y-4">
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Security alerts filtered view is coming soon. This will include login attempts, permission changes, and suspicious activity.
+              </AlertDescription>
+            </Alert>
+          </TabsContent>
+          
+          <TabsContent value="system" className="space-y-4">
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                System updates filtered view is coming soon. This will include maintenance notices, version updates, and system status changes.
+              </AlertDescription>
+            </Alert>
+          </TabsContent>
+        </Tabs>
       </div>
     </AdminLayout>
   );
