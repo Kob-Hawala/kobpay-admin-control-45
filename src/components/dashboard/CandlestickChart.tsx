@@ -41,12 +41,6 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const candleSeries = chart.addSeries({
       type: 'Candlestick',
-      priceFormat: {
-        type: 'price',
-        precision: 2,
-      },
-      color: '#10b981', // green for up
-      baseLineColor: '#ef4444', // red for down
     });
     
     // Format data for candlestick chart
