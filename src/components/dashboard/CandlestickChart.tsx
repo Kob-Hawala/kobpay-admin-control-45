@@ -40,7 +40,7 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     const chart = createChart(chartContainerRef.current, chartOptions);
     
     // Use the correct method for creating a candlestick series
-    const candleSeries = chart.addCandlestickSeries();
+    const candleSeries = chart.addSeries('candlestick');
     
     // Set the colors through the applyOptions method
     candleSeries.applyOptions({
