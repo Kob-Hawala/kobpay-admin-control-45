@@ -1,36 +1,35 @@
-
 import { useState } from "react";
 import AdminLayout from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Check, Search } from "lucide-react";
-import NotificationTable from "@/components/notifications/notification-table";
+import NotificationTable, { Notification, NotificationType } from "@/components/notifications/notification-table";
 import { mockNotifications } from "@/components/notifications/mock-notifications";
 
 export default function NotificationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [notifications, setNotifications] = useState(mockNotifications);
-  
+  const [filterType, setFilterType] = useState<NotificationType | "all">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "read" | "unread">("all");
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notification => 
+    setNotifications((prev: Notification[]) =>
+      prev.map((notification) =>
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
   };
-  
+
   const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
+    setNotifications((prev: Notification[]) =>
+      prev.map((notification) => ({ ...notification, read: true }))
     );
   };
 
@@ -43,21 +42,21 @@ export default function NotificationsPage() {
             View and manage system notifications and alerts
           </p>
         </div>
-        
+
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
           <div className="relative w-full md:w-auto">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input 
-              type="search" 
-              placeholder="Search notifications..." 
-              className="pl-8 w-full md:w-[300px]" 
+            <Input
+              type="search"
+              placeholder="Search notifications..."
+              className="pl-8 w-full md:w-[300px]"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-            <Select value={filterType} onValueChange={setFilterType}>
+            <Select value={filterType} onValueChange={(value) => setFilterType(value as NotificationType | "all")}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
@@ -70,8 +69,8 @@ export default function NotificationsPage() {
                 <SelectItem value="kyc">KYC</SelectItem>
               </SelectContent>
             </Select>
-            
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
+
+            <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as "all" | "read" | "unread")}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
@@ -81,18 +80,14 @@ export default function NotificationsPage() {
                 <SelectItem value="unread">Unread</SelectItem>
               </SelectContent>
             </Select>
-            
-            <Button 
-              variant="outline" 
-              onClick={markAllAsRead} 
-              className="whitespace-nowrap"
-            >
+
+            <Button variant="outline" onClick={markAllAsRead} className="whitespace-nowrap">
               <Check className="mr-2 h-4 w-4" />
               Mark all as read
             </Button>
           </div>
         </div>
-        
+
         <NotificationTable
           notifications={notifications}
           filterType={filterType}

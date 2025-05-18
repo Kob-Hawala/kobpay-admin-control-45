@@ -1,18 +1,42 @@
-
 // Mock data for P2P transaction messages
-export const mockChatThreads = [
+export interface Message {
+  id: string;
+  senderId: string;
+  senderName: string;
+  type: "text" | "event";
+  content: string;
+  timestamp: Date;
+  status: string;
+}
+
+export interface ChatThread {
+  id: string;
+  orderId: string;
+  buyer: { id: string; name: string; avatarUrl: string };
+  seller: { id: string; name: string; avatarUrl: string };
+  amount: number;
+  currency: string;
+  fiatAmount: number;
+  fiatCurrency: string;
+  status: string;
+  lastMessage: string;
+  lastMessageTime: Date;
+  messages: Message[];
+}
+
+export const mockChatThreads: ChatThread[] = [
   {
     id: "thread-001",
     orderId: "P2P-12345",
     buyer: {
       id: "user-123",
       name: "Alice Johnson",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     seller: {
       id: "user-456",
       name: "Bob Smith",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     amount: 0.5,
     currency: "BTC",
@@ -29,7 +53,7 @@ export const mockChatThreads = [
         type: "text",
         content: "Hello, I'd like to buy 0.5 BTC",
         timestamp: new Date("2025-05-16T14:20:00"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-002",
@@ -38,7 +62,7 @@ export const mockChatThreads = [
         type: "text",
         content: "Great, please send the payment to my bank account listed in the order details",
         timestamp: new Date("2025-05-16T14:25:45"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-003",
@@ -47,7 +71,7 @@ export const mockChatThreads = [
         type: "event",
         content: "Escrow created for 0.5 BTC",
         timestamp: new Date("2025-05-16T14:26:12"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-004",
@@ -56,9 +80,9 @@ export const mockChatThreads = [
         type: "text",
         content: "I've sent the bank transfer. Please confirm receipt.",
         timestamp: new Date("2025-05-16T14:35:22"),
-        status: "delivered"
-      }
-    ]
+        status: "delivered",
+      },
+    ],
   },
   {
     id: "thread-002",
@@ -66,12 +90,12 @@ export const mockChatThreads = [
     buyer: {
       id: "user-789",
       name: "Chen Wei",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     seller: {
       id: "user-101",
       name: "Darlene Roberts",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     amount: 2.0,
     currency: "ETH",
@@ -88,7 +112,7 @@ export const mockChatThreads = [
         type: "text",
         content: "Hi, I want to purchase 2 ETH",
         timestamp: new Date("2025-05-17T09:45:00"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-102",
@@ -97,7 +121,7 @@ export const mockChatThreads = [
         type: "text",
         content: "Accepted. Please send $5800 to my bank account.",
         timestamp: new Date("2025-05-17T09:48:20"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-103",
@@ -106,7 +130,7 @@ export const mockChatThreads = [
         type: "event",
         content: "Escrow created for 2.0 ETH",
         timestamp: new Date("2025-05-17T09:50:00"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-104",
@@ -115,7 +139,7 @@ export const mockChatThreads = [
         type: "text",
         content: "I've sent the payment. Transaction ID: BANK123456",
         timestamp: new Date("2025-05-17T10:05:12"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-105",
@@ -124,7 +148,7 @@ export const mockChatThreads = [
         type: "text",
         content: "I'm checking my bank account, one moment",
         timestamp: new Date("2025-05-17T10:08:30"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-106",
@@ -133,7 +157,7 @@ export const mockChatThreads = [
         type: "text",
         content: "I haven't received the ETH yet, opening dispute",
         timestamp: new Date("2025-05-17T10:12:45"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-107",
@@ -142,9 +166,9 @@ export const mockChatThreads = [
         type: "event",
         content: "Dispute opened by buyer",
         timestamp: new Date("2025-05-17T10:13:00"),
-        status: "delivered"
-      }
-    ]
+        status: "delivered",
+      },
+    ],
   },
   {
     id: "thread-003",
@@ -152,12 +176,12 @@ export const mockChatThreads = [
     buyer: {
       id: "user-202",
       name: "Eva Martinez",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     seller: {
       id: "user-303",
       name: "Frank Wilson",
-      avatarUrl: ""
+      avatarUrl: "",
     },
     amount: 1000,
     currency: "USDT",
@@ -174,7 +198,7 @@ export const mockChatThreads = [
         type: "text",
         content: "Hello, I'd like to purchase 1000 USDT",
         timestamp: new Date("2025-05-16T18:30:00"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-202",
@@ -183,7 +207,7 @@ export const mockChatThreads = [
         type: "event",
         content: "Escrow created for 1000 USDT",
         timestamp: new Date("2025-05-16T18:31:22"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-203",
@@ -192,7 +216,7 @@ export const mockChatThreads = [
         type: "text",
         content: "I've received the payment and released the USDT",
         timestamp: new Date("2025-05-16T18:40:45"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-204",
@@ -201,7 +225,7 @@ export const mockChatThreads = [
         type: "event",
         content: "Escrow released, transaction completed",
         timestamp: new Date("2025-05-16T18:41:00"),
-        status: "delivered"
+        status: "delivered",
       },
       {
         id: "msg-205",
@@ -210,8 +234,8 @@ export const mockChatThreads = [
         type: "text",
         content: "Thank you for the smooth transaction!",
         timestamp: new Date("2025-05-16T18:45:10"),
-        status: "delivered"
-      }
-    ]
-  }
+        status: "delivered",
+      },
+    ],
+  },
 ];

@@ -1,11 +1,21 @@
-
-import { useState } from "react";
+import React, { useState } from "react"; // Added React import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Table, TableBody, TableCaption, TableCell, 
-  TableHead, TableHeader, TableRow 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
   Pagination,
@@ -18,26 +28,26 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Search, Download, Filter } from "lucide-react";
 import { format } from "date-fns";
-import { mockLogsData } from "@/data/mock-logs-data";
+import { mockActivityLogs } from "@/data/mock-logs-data"; // Updated import
 
 export default function ActivityLogsViewer() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   // Filter logs based on search term and type
-  const filteredLogs = mockLogsData.filter((log) => {
-    const matchesSearch = 
+  const filteredLogs = mockActivityLogs.filter((log) => {
+    const matchesSearch =
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.adminUser.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.details.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesType = filterType === "all" || log.type === filterType;
-    
+
     return matchesSearch && matchesType;
   });
-  
+
   // Calculate pagination
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
   const paginatedLogs = filteredLogs.slice(
@@ -48,21 +58,18 @@ export default function ActivityLogsViewer() {
   // Export logs to CSV
   const exportToCSV = () => {
     const headers = ["Date", "Time", "Admin", "Action", "Type", "Details", "IP Address"];
-    const rows = filteredLogs.map(log => [
+    const rows = filteredLogs.map((log) => [
       format(new Date(log.timestamp), "yyyy-MM-dd"),
       format(new Date(log.timestamp), "HH:mm:ss"),
       log.adminUser,
       log.action,
       log.type,
       log.details,
-      log.ipAddress
+      log.ipAddress,
     ]);
-    
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(row => row.join(","))
-    ].join("\n");
-    
+
+    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -86,7 +93,7 @@ export default function ActivityLogsViewer() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-2">
           <Select value={filterType} onValueChange={setFilterType}>
             <SelectTrigger className="w-full sm:w-[180px]">
@@ -101,19 +108,17 @@ export default function ActivityLogsViewer() {
               <SelectItem value="settings">Settings</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Button variant="outline" onClick={exportToCSV}>
             <Download className="mr-2 h-4 w-4" />
             Export CSV
           </Button>
         </div>
       </div>
-      
+
       <div className="rounded-md border">
         <Table>
-          <TableCaption>
-            Activity logs for administrative actions
-          </TableCaption>
+          <TableCaption>Activity logs for administrative actions</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[180px]">Date & Time</TableHead>
@@ -133,11 +138,17 @@ export default function ActivityLogsViewer() {
                 <TableCell>{log.adminUser}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Badge variant={
-                      log.action.toLowerCase().includes("login") ? "outline" :
-                      log.action.toLowerCase().includes("update") ? "secondary" :
-                      log.action.toLowerCase().includes("delete") ? "destructive" : "default"
-                    }>
+                    <Badge
+                      variant={
+                        log.action.toLowerCase().includes("login")
+                          ? "outline"
+                          : log.action.toLowerCase().includes("update")
+                          ? "secondary"
+                          : log.action.toLowerCase().includes("delete")
+                          ? "destructive"
+                          : "default"
+                      }
+                    >
                       {log.action}
                     </Badge>
                   </div>
@@ -146,37 +157,34 @@ export default function ActivityLogsViewer() {
                 <TableCell className="hidden md:table-cell max-w-[300px] truncate">
                   {log.details}
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {log.ipAddress}
-                </TableCell>
+                <TableCell className="hidden md:table-cell">{log.ipAddress}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-      
+
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious 
+            <PaginationPrevious
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             />
           </PaginationItem>
-          
+
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => 
-              page === 1 || 
-              page === totalPages || 
-              (page >= currentPage - 1 && page <= currentPage + 1)
+            .filter(
+              (page) =>
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
             )
             .map((page, index, array) => (
               <React.Fragment key={page}>
                 {index > 0 && array[index - 1] !== page - 1 && (
                   <PaginationItem>
-                    <div className="flex h-9 w-9 items-center justify-center">
-                      ...
-                    </div>
+                    <div className="flex h-9 w-9 items-center justify-center">...</div>
                   </PaginationItem>
                 )}
                 <PaginationItem>
@@ -188,11 +196,10 @@ export default function ActivityLogsViewer() {
                   </PaginationLink>
                 </PaginationItem>
               </React.Fragment>
-            ))
-          }
-          
+            ))}
+
           <PaginationItem>
-            <PaginationNext 
+            <PaginationNext
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
             />

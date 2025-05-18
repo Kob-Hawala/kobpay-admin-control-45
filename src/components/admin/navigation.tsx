@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import {
   Calendar,
@@ -14,7 +13,7 @@ import {
   Eye,
   Store,
   Bell,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 import React from "react";
 
@@ -30,7 +29,7 @@ interface AdminNavigationProps {
 
 export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
   const location = useLocation();
-  
+
   const navItems: NavItem[] = [
     {
       label: "Dashboard",
@@ -132,7 +131,8 @@ export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
           <Link
             key={item.path}
             to={item.path}
-            title={collapsed ? item.label : undefined}
+            // Removed title prop to avoid type issue; rely on tooltip or aria-label for accessibility
+            aria-label={item.label} // Added for accessibility
             className={`${
               isActive
                 ? "bg-sidebar-accent text-sidebar-accent-foreground dark:bg-primary/10"
@@ -141,8 +141,10 @@ export function AdminNavigation({ collapsed = false }: AdminNavigationProps) {
               collapsed ? "justify-center" : ""
             }`}
           >
-            {React.cloneElement(item.icon, {
-              className: `h-5 w-5 ${isActive ? "text-sidebar-accent-foreground dark:text-primary" : "text-sidebar-foreground dark:text-gray-200"}`
+            {React.cloneElement(item.icon as React.ReactElement, {
+              className: `h-5 w-5 ${
+                isActive ? "text-sidebar-accent-foreground dark:text-primary" : "text-sidebar-foreground dark:text-gray-200"
+              }`,
             })}
             {!collapsed && <span>{item.label}</span>}
           </Link>
