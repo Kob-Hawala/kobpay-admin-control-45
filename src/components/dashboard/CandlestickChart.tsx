@@ -40,7 +40,7 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     const chart = createChart(chartContainerRef.current, chartOptions);
     
     const candleSeries = chart.addSeries({
-      type: 'candlestick',
+      type: 'Candlestick',
       upColor: '#10b981', // green for up
       downColor: '#ef4444', // red for down
       borderVisible: false,
