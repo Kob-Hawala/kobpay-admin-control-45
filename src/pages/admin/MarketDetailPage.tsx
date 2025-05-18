@@ -6,91 +6,65 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
-import { RevenueChart } from "@/components/dashboard";
-
-interface CryptoData {
-  id: string;
-  symbol: string;
-  name: string;
-  price: string;
-  price_num: number;
-  change: number;
-  market_cap: string;
-  volume: string;
-}
+import { useSingleCryptoData } from "@/hooks/use-crypto-data";
+import { fetchChartData, fetchTokenNews, ChartData } from "@/services/crypto-api";
+import { CandlestickChart } from "@/components/dashboard/CandlestickChart";
+import { LineChart } from "@/components/dashboard/LineChart";
 
 export default function MarketDetailPage() {
   const { coinId } = useParams<{ coinId: string }>();
-  const [cryptoData, setCryptoData] = useState<CryptoData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const symbol = coinId?.toUpperCase() || "BTC";
+  const { cryptoData, isLoading: isLoadingCrypto } = useSingleCryptoData(symbol);
+  
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [isLoadingChart, setIsLoadingChart] = useState(true);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
   const [chartType, setChartType] = useState<"line" | "candlestick">("line");
-  const [timeframe, setTimeframe] = useState<"1D" | "1W" | "1M" | "3M" | "1Y">("1D");
+  const [timeframe, setTimeframe] = useState<"1h" | "1d" | "1w" | "1m" | "3m" | "1y">("1d");
   const [activeTab, setActiveTab] = useState<"chart" | "news">("chart");
 
-  // Mock crypto data
-  const mockCryptoData: Record<string, CryptoData> = {
-    bitcoin: { id: "bitcoin", symbol: "BTC", name: "Bitcoin", price: "$64,892.50", price_num: 64892.5, change: 2.34, market_cap: "$1.2T", volume: "$45.2B" },
-    ethereum: { id: "ethereum", symbol: "ETH", name: "Ethereum", price: "$3,457.32", price_num: 3457.32, change: 1.25, market_cap: "$415.8B", volume: "$18.5B" },
-    tether: { id: "tether", symbol: "USDT", name: "Tether", price: "$1.00", price_num: 1.00, change: 0.01, market_cap: "$96.7B", volume: "$89.1B" },
-    tron: { id: "tron", symbol: "TRX", name: "TRON", price: "$0.12", price_num: 0.12, change: -0.85, market_cap: "$11.2B", volume: "$1.5B" },
-  };
-
-  // Mock crypto news
-  const cryptoNews: Record<string, Array<{ title: string; source: string; time: string; url: string }>> = {
-    bitcoin: [
-      { title: "Bitcoin ETFs See Record Inflows as Price Soars", source: "CoinDesk", time: "2 hours ago", url: "#" },
-      { title: "El Salvador Adds 100 BTC to National Treasury", source: "Bitcoin Magazine", time: "1 day ago", url: "#" },
-      { title: "BTC Mining Difficulty Reaches All-Time High", source: "CryptoSlate", time: "3 days ago", url: "#" },
-      { title: "Bitcoin Halving Impact Analysis: What to Expect", source: "Forbes Crypto", time: "4 days ago", url: "#" },
-      { title: "Institutional Adoption Surges as Banks Launch BTC Custody", source: "The Block", time: "5 days ago", url: "#" },
-      { title: "Bitcoin Address Activity Reaches 3-Year High", source: "CoinMetrics", time: "1 week ago", url: "#" },
-      { title: "Lightning Network Capacity Exceeds 5000 BTC", source: "Bitcoin Magazine", time: "1 week ago", url: "#" },
-    ],
-    ethereum: [
-      { title: "Ethereum Layer 2 Solutions See Exponential Growth", source: "Decrypt", time: "5 hours ago", url: "#" },
-      { title: "ETH Staking APY Rises After Latest Network Upgrade", source: "CoinTelegraph", time: "1 day ago", url: "#" },
-      { title: "Major DeFi Protocol to Build Exclusively on Ethereum", source: "The Block", time: "2 days ago", url: "#" },
-      { title: "Ethereum Layer 2 TVL Surpasses $45 Billion", source: "DeFi Pulse", time: "3 days ago", url: "#" },
-      { title: "ETH Gas Fees Drop 40% Following EIP-4844 Implementation", source: "Ethereum Foundation", time: "5 days ago", url: "#" },
-      { title: "Ethereum 2.0 Validators Surpass 1 Million", source: "Etherscan", time: "1 week ago", url: "#" },
-      { title: "ETH Privacy Solution ZK-SNARKs Integration Complete", source: "ConsenSys", time: "2 weeks ago", url: "#" },
-    ],
-    tether: [
-      { title: "Tether Issues Transparency Report for Q1 2025", source: "Tether", time: "12 hours ago", url: "#" },
-      { title: "USDT Trading Volume Exceeds $100B on Major Exchanges", source: "CoinGecko", time: "2 days ago", url: "#" },
-      { title: "Tether Expands Reserves with Short-Term Treasury Bills", source: "Bloomberg", time: "3 days ago", url: "#" },
-      { title: "USDT Launches on New Blockchain Network", source: "Tether Blog", time: "4 days ago", url: "#" },
-      { title: "Regulatory Compliance: Tether Passes Third-Party Audit", source: "Crypto News", time: "1 week ago", url: "#" },
-      { title: "USDT Market Cap Reaches New All-Time High", source: "CoinMarketCap", time: "8 days ago", url: "#" },
-      { title: "Tether CTO Discusses Future of Stablecoins", source: "Podcast Transcript", time: "2 weeks ago", url: "#" },
-    ],
-    tron: [
-      { title: "TRON's DeFi TVL Reaches $14 Billion", source: "DeFi Pulse", time: "6 hours ago", url: "#" },
-      { title: "Justin Sun Announces Major TRON Ecosystem Updates", source: "CryptoPotato", time: "1 day ago", url: "#" },
-      { title: "TRON Transaction Volume Surpasses Ethereum for Third Day", source: "Coin Journal", time: "4 days ago", url: "#" },
-      { title: "TRON Launches $100M Developer Incentive Program", source: "TRON Foundation", time: "5 days ago", url: "#" },
-      { title: "TRX Staking Rewards to Increase by 15%", source: "TRON Blog", time: "1 week ago", url: "#" },
-      { title: "TRON Partners with Major Payment Processor", source: "Finance Magnates", time: "10 days ago", url: "#" },
-      { title: "Analysis: TRON Ecosystem Growth YTD 2025", source: "DappRadar", time: "2 weeks ago", url: "#" },
-    ],
-  };
-
+  // Fetch chart data when timeframe changes
   useEffect(() => {
-    // Simulating API fetch
-    setIsLoading(true);
-    setTimeout(() => {
-      if (coinId && mockCryptoData[coinId]) {
-        setCryptoData(mockCryptoData[coinId]);
+    const loadChartData = async () => {
+      try {
+        setIsLoadingChart(true);
+        const data = await fetchChartData(symbol, timeframe);
+        setChartData(data);
+      } catch (err) {
+        console.error("Error fetching chart data:", err);
+      } finally {
+        setIsLoadingChart(false);
       }
-      setIsLoading(false);
-    }, 1000);
-  }, [coinId]);
+    };
+    
+    loadChartData();
+  }, [symbol, timeframe]);
 
-  if (isLoading) {
+  // Fetch news data
+  useEffect(() => {
+    const loadNewsData = async () => {
+      try {
+        setIsLoadingNews(true);
+        const news = await fetchTokenNews(symbol);
+        setNewsItems(news);
+      } catch (err) {
+        console.error("Error fetching news:", err);
+      } finally {
+        setIsLoadingNews(false);
+      }
+    };
+    
+    if (activeTab === "news") {
+      loadNewsData();
+    }
+  }, [symbol, activeTab]);
+
+  if (isLoadingCrypto) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          <p className="text-lg">Loading...</p>
+          <p className="text-lg">Loading market data...</p>
         </div>
       </AdminLayout>
     );
@@ -120,7 +94,7 @@ export default function MarketDetailPage() {
       <div className="space-y-6">
         <div className="flex items-center">
           <Link to="/admin/dashboard">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="dark:bg-background dark:text-foreground">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Button>
@@ -130,7 +104,7 @@ export default function MarketDetailPage() {
             <div className="flex items-center">
               <p className="text-xl">{cryptoData.price}</p>
               <span className={`ml-2 ${cryptoData.change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                {cryptoData.change >= 0 ? '+' : ''}{cryptoData.change}%
+                {cryptoData.change >= 0 ? '+' : ''}{cryptoData.change.toFixed(2)}%
               </span>
             </div>
           </div>
@@ -175,6 +149,7 @@ export default function MarketDetailPage() {
                     variant={chartType === "line" ? "default" : "outline"} 
                     size="sm"
                     onClick={() => setChartType("line")}
+                    className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
                   >
                     Line
                   </Button>
@@ -182,42 +157,72 @@ export default function MarketDetailPage() {
                     variant={chartType === "candlestick" ? "default" : "outline"} 
                     size="sm"
                     onClick={() => setChartType("candlestick")}
+                    className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
                   >
                     Candlestick
                   </Button>
                 </div>
                 <div className="flex space-x-1">
-                  {["1D", "1W", "1M", "3M", "1Y"].map((period) => (
+                  {[
+                    { key: "1h", label: "1H" },
+                    { key: "1d", label: "1D" },
+                    { key: "1w", label: "1W" },
+                    { key: "1m", label: "1M" },
+                    { key: "3m", label: "3M" },
+                    { key: "1y", label: "1Y" }
+                  ].map((period) => (
                     <Button 
-                      key={period} 
-                      variant={timeframe === period ? "default" : "outline"} 
+                      key={period.key} 
+                      variant={timeframe === period.key ? "default" : "outline"} 
                       size="sm"
-                      onClick={() => setTimeframe(period as any)}
+                      onClick={() => setTimeframe(period.key as any)}
+                      className="dark:bg-primary dark:text-primary-foreground dark:border-primary/30"
                     >
-                      {period}
+                      {period.label}
                     </Button>
                   ))}
                 </div>
               </div>
               
-              <div className="h-96">
-                <RevenueChart />
+              <div className="h-96 w-full">
+                {isLoadingChart ? (
+                  <div className="flex items-center justify-center h-full">
+                    <p>Loading chart data...</p>
+                  </div>
+                ) : chartType === "candlestick" ? (
+                  <CandlestickChart data={chartData} />
+                ) : (
+                  <LineChart data={chartData} />
+                )}
               </div>
             </TabsContent>
             
             <TabsContent value="news" className="pt-4">
-              <div className="space-y-4">
-                {cryptoNews[coinId || ""]?.map((item, i) => (
-                  <div key={i} className="p-4 rounded-lg hover:bg-muted/30 transition-colors border">
-                    <h4 className="font-medium">{item.title}</h4>
-                    <div className="flex items-center text-xs text-muted-foreground mt-2">
-                      <span>{item.source}</span>
-                      <span className="mx-2">•</span>
-                      <span>{item.time}</span>
+              {isLoadingNews ? (
+                <div className="flex items-center justify-center h-40">
+                  <p>Loading news articles...</p>
+                </div>
+              ) : newsItems.length > 0 ? (
+                <div className="space-y-4">
+                  {newsItems.map((item, i) => (
+                    <div key={i} className="p-4 rounded-lg hover:bg-muted/30 transition-colors border dark:border-gray-800">
+                      <h4 className="font-medium">{item.title}</h4>
+                      {item.summary && (
+                        <p className="text-sm text-muted-foreground mt-1">{item.summary}</p>
+                      )}
+                      <div className="flex items-center text-xs text-muted-foreground mt-2">
+                        <span>{item.source}</span>
+                        <span className="mx-2">•</span>
+                        <span>{item.time}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-muted-foreground">No news articles found for {cryptoData.name}</p>
+                </div>
+              )}
             </TabsContent>
           </CardContent>
         </Card>

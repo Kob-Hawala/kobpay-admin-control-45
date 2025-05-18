@@ -1,90 +1,51 @@
+import React, { useState } from "react";
+import { Sidebar } from "@/components/sidebar";
+import { Header } from "@/components/header";
 
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { Sidebar } from "./admin/sidebar";
-import { Header } from "./admin/header";
-import { MobileSidebarToggle } from "./admin/mobile-sidebar-toggle";
-import { Toaster } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
-import RealtimeEvents from "./realtime/realtime-events";
-
-interface AdminLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function AdminLayout({ children }: AdminLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const location = useLocation();
-  const isMobile = useIsMobile();
-
-  // Close sidebar on mobile when route changes
-  useEffect(() => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-  }, [location.pathname, isMobile]);
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Handle clicking outside the sidebar on mobile to close it
-  const handleContentClick = () => {
-    if (isMobile && isSidebarOpen) {
-      setIsSidebarOpen(false);
-    }
-  };
-
   return (
-    <div className="flex h-screen w-full overflow-hidden">
-      {/* Real-time events handler (invisible component) */}
-      <RealtimeEvents />
-
-      {/* Toast notifications provider - positioned in top-right only */}
-      <Toaster 
-        position="top-right" 
-        richColors 
-        closeButton
-        toastOptions={{
-          duration: 4000,
-          style: { 
-            background: 'var(--background)', 
-            color: 'var(--foreground)', 
-            border: '1px solid var(--border)' 
-          },
-        }}
-      />
-
-      {/* Mobile sidebar toggle */}
-      <MobileSidebarToggle 
-        isSidebarOpen={isSidebarOpen} 
-        toggleSidebar={toggleSidebar} 
-      />
-
-      {/* Sidebar */}
-      <Sidebar isSidebarOpen={isSidebarOpen} />
+    <div className="flex h-screen bg-background text-foreground">
+      <Sidebar className="hidden md:flex" />
       
-      {/* Overlay for mobile when sidebar is open */}
-      {isMobile && isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-20"
-          onClick={toggleSidebar}
-        />
-      )}
-      
-      {/* Main content */}
-      <div 
-        className="flex-1 flex flex-col h-full overflow-hidden"
-        onClick={handleContentClick}
-      >
-        {/* Header */}
-        <Header toggleSidebar={toggleSidebar} />
-
-        {/* Main content area */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        <Header />
+        
+        <main className="flex-1 p-6 md:p-8">
           {children}
         </main>
       </div>
+
+      <style global jsx>{`
+        /* Ensure dark mode support for form elements */
+        .dark input,
+        .dark textarea,
+        .dark select,
+        .dark [class*="select-trigger"],
+        .dark [class*="select-content"] {
+          background-color: hsl(var(--background));
+          color: hsl(var(--foreground));
+          border-color: hsl(var(--border));
+        }
+        
+        /* Fix sidebar icon visibility */
+        .dark [data-collapsed] svg {
+          color: hsl(var(--foreground));
+        }
+        
+        /* Hover states for sidebar icons */
+        .dark [data-collapsed] a:hover svg,
+        .dark [data-collapsed] button:hover svg {
+          color: hsl(var(--primary));
+        }
+      `}</style>
     </div>
   );
-}
+};
+
+export default AdminLayout;

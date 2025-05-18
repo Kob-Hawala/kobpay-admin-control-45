@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/admin-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,36 +20,14 @@ import {
   Bell,
   Filter
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface CryptoData {
-  id: string;
-  symbol: string;
-  name: string;
-  price: string;
-  price_num: number;
-  change: number;
-  market_cap: string;
-  volume: string;
-}
+import { useCryptoData } from "@/hooks/use-crypto-data";
+import { SUPPORTED_TOKENS } from "@/services/crypto-api";
 
 export default function DashboardPage() {
-  const [cryptoData, setCryptoData] = useState<CryptoData[]>([
-    { id: "bitcoin", symbol: "BTC", name: "Bitcoin", price: "$64,892.50", price_num: 64892.5, change: 2.34, market_cap: "$1.2T", volume: "$45.2B" },
-    { id: "ethereum", symbol: "ETH", name: "Ethereum", price: "$3,457.32", price_num: 3457.32, change: 1.25, market_cap: "$415.8B", volume: "$18.5B" },
-    { id: "tether", symbol: "USDT", name: "Tether", price: "$1.00", price_num: 1.00, change: 0.01, market_cap: "$96.7B", volume: "$89.1B" },
-    { id: "tron", symbol: "TRX", name: "TRON", price: "$0.12", price_num: 0.12, change: -0.85, market_cap: "$11.2B", volume: "$1.5B" },
-  ]);
+  const navigate = useNavigate();
+  const { cryptoData, isLoading } = useCryptoData();
   
-  const [selectedCrypto, setSelectedCrypto] = useState<CryptoData | null>(null);
-  const [chartDialogOpen, setChartDialogOpen] = useState(false);
-  const [chartType, setChartType] = useState<"line" | "candlestick">("line");
-  const [timeframe, setTimeframe] = useState<"1D" | "1W" | "1M" | "3M" | "1Y">("1D");
-  const [activeTab, setActiveTab] = useState<"chart" | "news">("chart");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Mock data for dashboard
+  // Mock data for dashboard (non-crypto data)
   const statsData = {
     totalUsers: 5824,
     kycRatio: 78,
@@ -101,63 +80,21 @@ export default function DashboardPage() {
     },
   ];
 
-  // Mock crypto news for the selected crypto
-  const cryptoNews = {
-    bitcoin: [
-      { title: "Bitcoin ETFs See Record Inflows as Price Soars", source: "CoinDesk", time: "2 hours ago", url: "#" },
-      { title: "El Salvador Adds 100 BTC to National Treasury", source: "Bitcoin Magazine", time: "1 day ago", url: "#" },
-      { title: "BTC Mining Difficulty Reaches All-Time High", source: "CryptoSlate", time: "3 days ago", url: "#" },
-    ],
-    ethereum: [
-      { title: "Ethereum Layer 2 Solutions See Exponential Growth", source: "Decrypt", time: "5 hours ago", url: "#" },
-      { title: "ETH Staking APY Rises After Latest Network Upgrade", source: "CoinTelegraph", time: "1 day ago", url: "#" },
-      { title: "Major DeFi Protocol to Build Exclusively on Ethereum", source: "The Block", time: "2 days ago", url: "#" },
-    ],
-    tether: [
-      { title: "Tether Issues Transparency Report for Q1 2025", source: "Tether", time: "12 hours ago", url: "#" },
-      { title: "USDT Trading Volume Exceeds $100B on Major Exchanges", source: "CoinGecko", time: "2 days ago", url: "#" },
-      { title: "Tether Expands Reserves with Short-Term Treasury Bills", source: "Bloomberg", time: "3 days ago", url: "#" },
-    ],
-    tron: [
-      { title: "TRON's DeFi TVL Reaches $14 Billion", source: "DeFi Pulse", time: "6 hours ago", url: "#" },
-      { title: "Justin Sun Announces Major TRON Ecosystem Updates", source: "CryptoPotato", time: "1 day ago", url: "#" },
-      { title: "TRON Transaction Volume Surpasses Ethereum for Third Day", source: "Coin Journal", time: "4 days ago", url: "#" },
-    ],
+  const handleCryptoClick = (crypto: any) => {
+    navigate(`/admin/markets/${crypto.symbol.toLowerCase()}`);
   };
 
-  // Effect to fetch crypto data (simulated)
-  useEffect(() => {
-    // In a real implementation, you would make an API call to Coindesk here
-    // For now, we'll use the mock data initialized above
-    
-    // Simulating API call
-    const fetchCryptoData = async () => {
-      try {
-        // In a real implementation, this would be replaced with actual API call
-        // const res = await fetch('https://api.coindesk.com/v1/bpi/currentprice.json');
-        // const data = await res.json();
-        // Process data and setCryptoData(processed_data)
-        
-        // For now we'll just use a timeout to simulate API call
-        setIsLoading(true);
-        setTimeout(() => {
-          // Our mock data is already set in state
-          setIsLoading(false);
-        }, 1500);
-      } catch (error) {
-        console.error("Error fetching crypto data:", error);
-        setIsLoading(false);
-      }
-    };
+  // Get the first 4 supported tokens for the main display
+  const mainTokens = ["BTC", "ETH", "USDT", "TRX"];
+  const displayedMainCryptos = mainTokens
+    .map(symbol => cryptoData.find(crypto => crypto.symbol === symbol))
+    .filter(Boolean);
 
-    fetchCryptoData();
-  }, []);
-
-  const handleCryptoClick = (crypto: CryptoData) => {
-    setSelectedCrypto(crypto);
-    setChartDialogOpen(true);
-    setActiveTab("chart");
-  };
+  // Get additional tokens for the expanded view
+  const additionalTokens = SUPPORTED_TOKENS.filter(token => !mainTokens.includes(token));
+  const displayedAdditionalCryptos = additionalTokens
+    .map(symbol => cryptoData.find(crypto => crypto.symbol === symbol))
+    .filter(Boolean);
 
   return (
     <AdminLayout>
@@ -273,23 +210,52 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Crypto Overview Cards */}
+        {/* Crypto Overview Cards - Main Tokens */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Cryptocurrency Market Overview</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {cryptoData.map((crypto) => (
-                <div 
-                  key={crypto.id} 
-                  className="cursor-pointer hover:scale-105 transition-transform"
-                  onClick={() => handleCryptoClick(crypto)}
-                >
-                  <CryptoRateCard crypto={crypto} />
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((placeholder) => (
+                  <div 
+                    key={placeholder}
+                    className="p-3 rounded-lg bg-muted/30 h-20 animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {displayedMainCryptos.map((crypto) => (
+                    <div 
+                      key={crypto.id} 
+                      className="cursor-pointer hover:scale-105 transition-transform"
+                      onClick={() => handleCryptoClick(crypto)}
+                    >
+                      <CryptoRateCard crypto={crypto} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+
+                {/* Additional Tokens */}
+                <div className="mt-8">
+                  <h3 className="font-medium mb-4">Additional Cryptocurrencies</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {displayedAdditionalCryptos.map((crypto) => (
+                      <div 
+                        key={crypto.id} 
+                        className="cursor-pointer hover:scale-105 transition-transform"
+                        onClick={() => handleCryptoClick(crypto)}
+                      >
+                        <CryptoRateCard crypto={crypto} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
             <p className="text-xs text-muted-foreground text-center">
               Click on any cryptocurrency for detailed market data and news
             </p>
@@ -336,103 +302,6 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Crypto Detail Dialog */}
-        <Dialog open={chartDialogOpen} onOpenChange={setChartDialogOpen}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedCrypto?.name} ({selectedCrypto?.symbol}) - {selectedCrypto?.price}
-              </DialogTitle>
-            </DialogHeader>
-            
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "chart" | "news")}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="chart">Market Chart</TabsTrigger>
-                <TabsTrigger value="news">News</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="chart" className="space-y-4 pt-2">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant={chartType === "line" ? "default" : "outline"} 
-                      size="sm"
-                      onClick={() => setChartType("line")}
-                    >
-                      Line
-                    </Button>
-                    <Button 
-                      variant={chartType === "candlestick" ? "default" : "outline"} 
-                      size="sm"
-                      onClick={() => setChartType("candlestick")}
-                    >
-                      Candlestick
-                    </Button>
-                  </div>
-                  <div className="flex space-x-1">
-                    {["1D", "1W", "1M", "3M", "1Y"].map((period) => (
-                      <Button 
-                        key={period} 
-                        variant={timeframe === period ? "default" : "outline"} 
-                        size="sm"
-                        onClick={() => setTimeframe(period as any)}
-                      >
-                        {period}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="h-64 bg-muted/20 rounded-md flex items-center justify-center">
-                  <p className="text-center text-muted-foreground">
-                    {selectedCrypto?.name} {chartType} chart for {timeframe} timeframe
-                    <br />
-                    <span className="text-sm">
-                      (TradingView chart would be embedded here in production)
-                    </span>
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Market Cap</p>
-                    <p className="font-medium">{selectedCrypto?.market_cap}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">24h Volume</p>
-                    <p className="font-medium">{selectedCrypto?.volume}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">24h Change</p>
-                    <p className={`font-medium ${selectedCrypto?.change && selectedCrypto.change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                      {selectedCrypto?.change}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Price</p>
-                    <p className="font-medium">{selectedCrypto?.price}</p>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="news" className="pt-2">
-                <div className="space-y-4">
-                  {selectedCrypto && cryptoNews[selectedCrypto.id as keyof typeof cryptoNews]?.map((item, i) => (
-                    <div key={i} className="p-3 rounded-lg hover:bg-muted/30 transition-colors border">
-                      <h4 className="font-medium">{item.title}</h4>
-                      <div className="flex items-center text-xs text-muted-foreground mt-1">
-                        <span>{item.source}</span>
-                        <span className="mx-2">•</span>
-                        <span>{item.time}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </DialogContent>
-        </Dialog>
       </div>
     </AdminLayout>
   );
