@@ -15,14 +15,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <Sidebar isSidebarOpen={isSidebarOpen} />
       
       <div className="flex flex-col flex-1 overflow-y-auto">
-        <Header />
+        <Header toggleSidebar={toggleSidebar} />
         
         <main className="flex-1 p-6 md:p-8">
           {children}
         </main>
       </div>
 
-      <style jsx>
+      <style>
         {`
         /* Ensure dark mode support for form elements */
         .dark input,
