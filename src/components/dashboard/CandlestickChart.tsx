@@ -41,7 +41,7 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     // Create a candlestick series with the proper method and options
     const candleSeries = chart.addSeries({
-      type: 'candlestick',
+      type: 'Candlestick', // Fixed capitalization: 'Candlestick' instead of 'candlestick'
       priceFormat: {
         type: 'price',
         precision: 2,
