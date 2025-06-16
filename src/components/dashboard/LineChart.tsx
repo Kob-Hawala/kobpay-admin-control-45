@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ChartData } from '@/services/crypto-api';
-import { createChart } from 'lightweight-charts';
+import { createChart, ColorType } from 'lightweight-charts';
 import { useTheme } from "@/providers/theme-provider";
 
 interface LineChartProps {
@@ -18,7 +18,7 @@ export function LineChart({ data }: LineChartProps) {
     
     const chartOptions = {
       layout: {
-        background: { color: isDarkMode ? '#1f2937' : '#ffffff' },
+        background: { type: ColorType.Solid, color: isDarkMode ? '#1f2937' : '#ffffff' },
         textColor: isDarkMode ? '#d1d5db' : '#1f2937',
       },
       width: chartContainerRef.current.clientWidth,
@@ -40,7 +40,7 @@ export function LineChart({ data }: LineChartProps) {
     const chart = createChart(chartContainerRef.current, chartOptions);
     
     // Create an area series using the correct API
-    const areaSeries = chart.addAreaSeries({
+    const areaSeries = chart.addSeries('Area', {
       lineColor: isDarkMode ? '#7e57c2' : '#6366f1',
       topColor: isDarkMode ? 'rgba(126, 87, 194, 0.4)' : 'rgba(99, 102, 241, 0.4)',
       bottomColor: isDarkMode ? 'rgba(126, 87, 194, 0.1)' : 'rgba(99, 102, 241, 0.1)',

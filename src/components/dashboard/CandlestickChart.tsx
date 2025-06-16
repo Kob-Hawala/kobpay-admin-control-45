@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ChartData } from '@/services/crypto-api';
-import { createChart } from 'lightweight-charts';
+import { createChart, ColorType } from 'lightweight-charts';
 import { useTheme } from "@/providers/theme-provider";
 
 interface CandlestickChartProps {
@@ -18,7 +18,7 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const chartOptions = {
       layout: {
-        background: { color: isDarkMode ? '#1f2937' : '#ffffff' },
+        background: { type: ColorType.Solid, color: isDarkMode ? '#1f2937' : '#ffffff' },
         textColor: isDarkMode ? '#d1d5db' : '#1f2937',
       },
       width: chartContainerRef.current.clientWidth,
@@ -40,7 +40,7 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     const chart = createChart(chartContainerRef.current, chartOptions);
     
     // Create a candlestick series using the correct API
-    const candleSeries = chart.addCandlestickSeries({
+    const candleSeries = chart.addSeries('Candlestick', {
       wickUpColor: '#10b981',
       wickDownColor: '#ef4444',
       upColor: '#10b981',
