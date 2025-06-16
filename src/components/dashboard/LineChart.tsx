@@ -39,14 +39,8 @@ export function LineChart({ data }: LineChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    // Create an area series using the correct API structure
-    const areaSeries = chart.addSeries({
-      type: 'Area',
-      priceFormat: {
-        type: 'price',
-        precision: 2,
-        minMove: 0.01,
-      },
+    // Create an area series using the correct API
+    const areaSeries = chart.addAreaSeries({
       lineColor: isDarkMode ? '#7e57c2' : '#6366f1',
       topColor: isDarkMode ? 'rgba(126, 87, 194, 0.4)' : 'rgba(99, 102, 241, 0.4)',
       bottomColor: isDarkMode ? 'rgba(126, 87, 194, 0.1)' : 'rgba(99, 102, 241, 0.1)',
