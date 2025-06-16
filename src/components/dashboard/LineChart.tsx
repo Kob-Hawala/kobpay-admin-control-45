@@ -39,8 +39,9 @@ export function LineChart({ data }: LineChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    // Create an area series using the correct addSeries method
-    const areaSeries = chart.addSeries('Area', {
+    // Create an area series using the correct API structure
+    const areaSeries = chart.addSeries({
+      type: 'Area',
       priceFormat: {
         type: 'price',
         precision: 2,
