@@ -39,8 +39,8 @@ export function CandlestickChart({ data }: CandlestickChartProps) {
     
     const chart = createChart(chartContainerRef.current, chartOptions);
     
-    // Create a candlestick series with the correct API structure
-    const candleSeries = chart.addCandlestickSeries({
+    // Create a candlestick series using the correct addSeries method
+    const candleSeries = chart.addSeries('Candlestick', {
       priceFormat: {
         type: 'price',
         precision: 2,
